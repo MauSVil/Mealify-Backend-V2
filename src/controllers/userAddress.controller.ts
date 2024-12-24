@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import { userAddressService } from '../services/userAddress.service';
 import { userAddressSchema } from '../types/UserAddress.type';
 import { userService } from '../services/user.service';
+import { RequestWithAuth } from 'src/types/Global.type';
 
 export const userAddressController = {
-  async getUserAddress(req: Request, res: Response) {
+  async getUserAddress(req: RequestWithAuth, res: Response) {
     try {
       const { userId } = req.auth!;
       const user = await userService.getUserByClerkId(userId);
@@ -19,7 +20,7 @@ export const userAddressController = {
       res.status(400).json({ error: 'An error occurred' });
     }
   },
-  async createUserAddress(req: Request, res: Response) {
+  async createUserAddress(req: RequestWithAuth, res: Response) {
     try {
       const { userId } = req.auth!;
       const user = await userService.getUserByClerkId(userId);
