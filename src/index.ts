@@ -1,0 +1,33 @@
+import express from "express";
+import { requireAuth } from "@clerk/express";
+import userRoutes from './routes/user.route';
+import authRoutes from './routes/auth.route';
+import restaurantRoutes from './routes/restaurant.route';
+import userAddressRoutes from './routes/userAddress.route';
+import productRoutes from './routes/product.route';
+import paymentRoutes from './routes/payment.route';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+    res.send('home')
+});
+
+app.get("/version", (req, res) => {
+    res.send("1.0.0");
+});
+
+app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
+app.use('/restaurants', restaurantRoutes);
+app.use('/user-addresses', requireAuth(), userAddressRoutes);
+app.use('/products', productRoutes);
+app.use('/payments', paymentRoutes);
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});

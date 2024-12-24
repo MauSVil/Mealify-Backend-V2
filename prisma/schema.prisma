@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model admins {
+  id            Int           @id @default(autoincrement())
+  name          String        @db.VarChar(100)
+  email         String        @unique @db.VarChar(150)
+  clerk_user_id String        @unique @db.VarChar(255)
+  created_at    DateTime?     @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?     @default(now()) @db.Timestamp(6)
+  restaurants   restaurants[]
+}
+
+model delivery_drivers {
+  id            Int       @id @default(autoincrement())
+  name          String    @db.VarChar(100)
+  phone         String    @db.VarChar(15)
+  email         String    @unique @db.VarChar(150)
+  clerk_user_id String    @unique @db.VarChar(255)
+  vehicle_type  String?   @db.VarChar(50)
+  license_plate String?   @db.VarChar(20)
+  is_active     Boolean   @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  updated_at    DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model products {
+  id            Int         @id @default(autoincrement())
+  restaurant_id Int
+  name          String      @db.VarChar(100)
+  description   String
+  price         Decimal     @db.Decimal(10, 2)
+  is_available  Boolean     @default(true)
+  created_at    DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?   @default(now()) @db.Timestamp(6)
+  image_max     String?     @db.VarChar(255)
+  image_med     String?     @db.VarChar(255)
+  image_min     String?     @db.VarChar(255)
+  restaurants   restaurants @relation(fields: [restaurant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model restaurants {
+  id             Int        @id @default(autoincrement())
+  admin_id       Int?
+  name           String     @db.VarChar(100)
+  address        String     @db.VarChar(255)
+  phone          String?    @db.VarChar(15)
+  latitude       Decimal    @db.Decimal(9, 6)
+  longitude      Decimal    @db.Decimal(9, 6)
+  category       String     @db.VarChar(100)
+  hero_image_min String?    @db.VarChar(255)
+  hero_image_med String?    @db.VarChar(255)
+  hero_image_max String?    @db.VarChar(255)
+  created_at     DateTime?  @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?  @default(now()) @db.Timestamp(6)
+  delivery_fee   Decimal    @db.Decimal
+  products       products[]
+  admins         admins?    @relation(fields: [admin_id], references: [id], onUpdate: NoAction)
+}
+
+model user_addresses {
+  id           Int       @id @default(autoincrement())
+  user_id      Int?
+  address_line String    @db.VarChar(255)
+  latitude     Decimal?  @db.Decimal(9, 6)
+  longitude    Decimal?  @db.Decimal(9, 6)
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+  updated_at   DateTime? @default(now()) @db.Timestamp(6)
+  users        users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(100)
+  email          String           @unique @db.VarChar(150)
+  clerk_user_id  String           @unique @db.VarChar(255)
+  phone          String?          @db.VarChar(15)
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  user_addresses user_addresses[]
+}
