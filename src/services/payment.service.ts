@@ -13,14 +13,13 @@ export const paymentService = {
     }
     return customer;
   },
-  createPaymentIntent: async (amount: number, distanceInKm: number, customer?: Stripe.Customer) => {
+  createPaymentIntent: async (amount: number, shippingCostPerKm: number, customer?: Stripe.Customer) => {
     const stripeComission = 7;
     const platformFee = 15;
     const plaformFeeAmount = amount * (platformFee / 100);
 
-    const costPerKm = 5;
     const baseShippingCost = 15;
-    const shippingCost = (distanceInKm * costPerKm) + baseShippingCost;
+    const shippingCost = shippingCostPerKm + baseShippingCost;
 
     const desiredNetAmount = amount + plaformFeeAmount + shippingCost;
     const stripePercentage = stripeComission / 100;

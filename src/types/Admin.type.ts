@@ -5,6 +5,7 @@ export const adminSchema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio'),
   email: z.string().email('El correo debe ser válido'),
   clerk_user_id: z.string(),
+  stripe_account: z.string(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });

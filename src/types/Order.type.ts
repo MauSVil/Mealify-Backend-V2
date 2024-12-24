@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 export const orderSchema = z.object({
   id: z.number().optional(),
-  userId: z.number().min(1, 'El ID del usuario es obligatorio'),
-  restaurantId: z.number().min(1, 'El ID del restaurante es obligatorio'),
-  driverId: z.number().optional(),
+  user_id: z.number().min(1, 'El ID del usuario es obligatorio'),
+  restaurant_id: z.number().min(1, 'El ID del restaurante es obligatorio'),
+  driver_id: z.number(),
   status: z.enum(['pending', 'in_progress', 'delivered', 'cancelled']).default('pending'),
-  totalPrice: z.number().nonnegative('El precio total debe ser positivo'),
-  deliveryFee: z.number().nonnegative('La tarifa de entrega debe ser positiva'),
+  total_price: z.coerce.number().nonnegative('El precio total debe ser positivo'),
+  delivery_fee: z.coerce.number().nonnegative('La tarifa de entrega debe ser positiva'),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });

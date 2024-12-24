@@ -16,8 +16,10 @@ export const paymentController = {
 
       const { distanceInKm } = await mapService.getRealDistance({ lat: latitude.toNumber(), lon: longitude.toNumber() }, { lat: userLatitude, lon: userLongitude });
 
+      const shippingCostPerKm = distanceInKm * restaurantFound.delivery_fee.toNumber();
+
       const customer = await paymentService.createCustomer(name, email);
-      const paymentIntent = await paymentService.createPaymentIntent(amount, distanceInKm, customer);
+      const paymentIntent = await paymentService.createPaymentIntent(amount, shippingCostPerKm, customer);
       res.status(200).json({ paymentIntent, customer: customer?.id });
     } catch (error) {
       if (error instanceof Error) {
