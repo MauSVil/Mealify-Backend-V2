@@ -15,6 +15,13 @@ export const OrderRepository = {
       },
     });
   },
+  findByPaymentIntentId: async (paymentIntentId: string) => {
+    return await prisma.orders.findFirst({
+      where: {
+        payment_intent_id: paymentIntentId,
+      },
+    });
+  },
   createOne: async (data: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>) => {
     return await prisma.orders.create({
       data: {

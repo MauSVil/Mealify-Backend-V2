@@ -3,17 +3,7 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const paymentService = {
-  createCustomer: async (name: string, email: string) => {
-    let customer;
-    const existingCustomer = await stripe.customers.list({ email });
-    if (existingCustomer.data.length > 0) customer = existingCustomer.data[0];
-    else {
-      const newCustomer = await stripe.customers.create({ email, name });
-      customer = newCustomer;
-    }
-    return customer;
-  },
-  createPaymentIntent: async (amount: number, shippingCostPerKm: number, customer?: Stripe.Customer) => {
+  getTotal: (amount: number, shippingCostPerKm: number) => {
     const stripeComission = 7;
     const platformFee = 15;
     const plaformFeeAmount = amount * (platformFee / 100);
@@ -26,11 +16,26 @@ export const paymentService = {
 
     const totalFinal = Math.ceil(desiredNetAmount / (1 - stripePercentage));
 
-    console.log('------ Desglose corregido ------');
+    console.log('------ Desglose ------');
     console.log(`Monto neto deseado: ${desiredNetAmount.toFixed(2)} MXN`);
     console.log(`Monto total a cobrar: ${totalFinal.toFixed(2)} MXN`);
     console.log(`Costo de envio: ${shippingCost.toFixed(2)} MXN`);
     console.log('--------------------------------');
+
+    return totalFinal;
+  },
+  createCustomer: async (name: string, email: string) => {
+    let customer;
+    const existingCustomer = await stripe.customers.list({ email });
+    if (existingCustomer.data.length > 0) customer = existingCustomer.data[0];
+    else {
+      const newCustomer = await stripe.customers.create({ email, name });
+      customer = newCustomer;
+    }
+    return customer;
+  },
+  createPaymentIntent: async (amount: number, shippingCostPerKm: number, customer?: Stripe.Customer) => {
+    const totalFinal = paymentService.getTotal(amount, shippingCostPerKm);
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(totalFinal * 100),

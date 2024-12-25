@@ -1,15 +1,8 @@
-import { readFileSync } from 'fs';
-import { fileService } from '../services/file.service';
+import { orderService } from "src/services/order.service"
 
 const init = async () => {
-  const file = await readFileSync('src/testing/burger.jpg');
-  const sizes = [200, 400, 800];
-  const extension = 'webp';
-  const compressedFiles = await fileService.compressImage(file, extension, sizes);
-
-  compressedFiles.forEach(async (compessedFile, idx) => {
-    await fileService.uploadImage('businesses', `12345/image-${sizes[idx]}.${extension}`, compessedFile);
-  })
-};
+  const orderFound = await orderService.findByPaymentIntentId('pi_3QZkncBV9Ssjkt8C1pEJQ1HQ');
+  console.log({ orderFound });
+}
 
 init();

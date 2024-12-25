@@ -6,11 +6,19 @@ import restaurantRoutes from './routes/restaurant.route';
 import userAddressRoutes from './routes/userAddress.route';
 import productRoutes from './routes/product.route';
 import paymentRoutes from './routes/payment.route';
+import stripeRoutes from './routes/stripe.route';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use((req, res, next) => {
+    if (req.originalUrl === "/stripe/webhook") {
+        next();
+    } else {
+        express.json()(req, res, next);
+    }
+});
+
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
@@ -26,7 +34,8 @@ app.use('/auth', authRoutes);
 app.use('/restaurants', restaurantRoutes);
 app.use('/user-addresses', requireAuth(), userAddressRoutes);
 app.use('/products', productRoutes);
-app.use('/payments', paymentRoutes);
+app.use('/payments', requireAuth(), paymentRoutes);
+app.use('/stripe', stripeRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

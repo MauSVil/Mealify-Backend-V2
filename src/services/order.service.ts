@@ -8,6 +8,9 @@ export const orderService = {
   findById: async (id: number) => {
     return await OrderRepository.findById(id);
   },
+  findByPaymentIntentId: async (paymentIntentId: string) => {
+    return await OrderRepository.findByPaymentIntentId(paymentIntentId);
+  },
   createOne: async (data: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>) => {
     return await OrderRepository.createOne(data);
   },
