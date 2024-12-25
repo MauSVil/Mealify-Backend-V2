@@ -7,9 +7,9 @@
     "dev": "ts-node-dev --project tsconfig.json src/index.ts",
     "build": "pnpm run:prisma && tsc",
     "start": "node dist/index.js",
-    "prisma:pull": "yarn prisma db pull",
-    "prisma:generate": "yarn prisma generate",
-    "run:prisma": "yarn prisma:pull && yarn prisma:generate"
+    "prisma:pull": "pnpm prisma db pull",
+    "prisma:generate": "pnpm prisma generate",
+    "run:prisma": "pnpm prisma:pull && pnpm prisma:generate"
   },
   "devDependencies": {
     "@types/multer": "^1.4.12",
