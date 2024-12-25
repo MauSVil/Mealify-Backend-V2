@@ -1,7 +1,7 @@
 {
   "name": "backv2",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --project tsconfig.json src/index.ts",
