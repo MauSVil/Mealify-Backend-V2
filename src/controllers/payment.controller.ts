@@ -71,19 +71,21 @@ export const paymentController = {
 
       const totalFinal = paymentService.getTotal(amount, deliveryFeeAmount);
 
-      await orderService.createOne({
+      const order = await orderService.createOne({
         user_id: user.id,
         restaurant_id: restaurant.id,
         delivery_fee: distanceInKm * restaurant.delivery_fee.toNumber(),
         status: 'pending',
+        payment_status: 'pending',
         total_price: totalFinal,
-        payment_intent_id
+        payment_intent_id,
+        latitude: userLatitude,
+        longitude: userLongitude,
       })
 
       const result = await paymentService.pay(payment_method_id, payment_intent_id, customer_id);
 
-
-      res.status(200).json({ result });
+      res.status(200).json({ result, orderId: order.id });
     } catch (error) {
       console.log({ error });
       if (error instanceof Error) {

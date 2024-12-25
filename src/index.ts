@@ -6,6 +6,7 @@ import restaurantRoutes from './routes/restaurant.route';
 import userAddressRoutes from './routes/userAddress.route';
 import productRoutes from './routes/product.route';
 import paymentRoutes from './routes/payment.route';
+import orderRoutes from './routes/order.route';
 import stripeRoutes from './routes/stripe.route';
 
 const app = express();
@@ -35,6 +36,7 @@ app.use('/restaurants', restaurantRoutes);
 app.use('/user-addresses', requireAuth(), userAddressRoutes);
 app.use('/products', productRoutes);
 app.use('/payments', requireAuth(), paymentRoutes);
+app.use('/orders', orderRoutes);
 app.use('/stripe', stripeRoutes);
 
 app.listen(PORT, () => {

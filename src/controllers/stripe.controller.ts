@@ -15,25 +15,27 @@ export const stripeController = {
           const orderFound = await orderService.findByPaymentIntentId(paymentIntent.id);
           if (!orderFound) throw new Error('Order not found');
 
-          await orderService.updateOne(orderFound.id, { status: 'in_progress' });
-
-          console.log('PaymentIntent was successful!');
+          await orderService.updateOne(orderFound.id, { status: 'in_progress', payment_status: 'completed' });
           break;
         }
         case 'payment_intent.canceled': {
           const paymentIntent = event.data.object;
-          console.log({ paymentIntent });
-          console.log('PaymentIntent was canceled!');
+          const orderFound = await orderService.findByPaymentIntentId(paymentIntent.id);
+          if (!orderFound) throw new Error('Order not found');
+          await orderService.updateOne(orderFound.id, { status: 'cancelled', payment_status: 'rejected' });
           break;
         }
-        case 'charge.updated': {
-          const charge = event.data.object;
-
-          const balanceTransaction = await stripe.balanceTransactions.retrieve(charge.balance_transaction?.toString()!);
-          console.log({ balanceTransaction });
-          console.log('Charge was updated!');
-          break;
-        }
+        // case 'charge.updated': {
+        //   const charge = event.data.object;
+        //   // const orderFound = await orderService.findByPaymentIntentId(charge.payment_intent?.toString()!);
+        //   // if (!orderFound) throw new Error('Order not found');
+        //   // const balanceTransaction = await stripe.balanceTransactions.retrieve(charge.balance_transaction?.toString()!);
+        //   // console.log({ balanceTransaction });
+        //   if (charge.status === 'succeeded') {
+        //     console.log('Charge was successful!');
+        //   }
+        //   break;
+        // }
       }
     }
     catch (err) {
