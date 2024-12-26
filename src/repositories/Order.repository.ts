@@ -1,19 +1,23 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { Order } from "../types/Order.type";
 
 const prisma = new PrismaClient();
 
 export const OrderRepository = {
-  findAll: async (includeRelations: Record<string, boolean> = {}) => {
+  findAll: async (includeRelations: Prisma.ordersInclude) => {
     return await prisma.orders.findMany({
-      include: includeRelations
+      include: includeRelations,
+      orderBy: {
+        created_at: 'desc',
+      }
     });
   },
-  findById: async (id: number) => {
+  findById: async (id: number, includeRelations: Prisma.ordersInclude) => {
     return await prisma.orders.findUnique({
       where: {
         id: id,
       },
+      include: includeRelations
     });
   },
   findByPaymentIntentId: async (paymentIntentId: string) => {

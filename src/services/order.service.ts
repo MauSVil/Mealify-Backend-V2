@@ -3,10 +3,10 @@ import { Order } from "../types/Order.type";
 
 export const orderService = {
   findAll: async () => {
-    return await OrderRepository.findAll({ restaurants: true });
+    return await OrderRepository.findAll({ restaurants: true, order_items: true });
   },
   findById: async (id: number) => {
-    return await OrderRepository.findById(id);
+    return await OrderRepository.findById(id, { order_items: { include: { products: true } } });
   },
   findByPaymentIntentId: async (paymentIntentId: string) => {
     return await OrderRepository.findByPaymentIntentId(paymentIntentId);

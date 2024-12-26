@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { paymentService } from "../services/payment.service";
 import { restaurantsService } from "../services/restaurant.service";
 import { mapService } from "../services/map.service";
-import { RequestWithAuth } from "src/types/Global.type";
+import { RequestWithAuth } from "../types/Global.type";
 import { userService } from "../services/user.service";
 import { orderService } from "../services/order.service";
+import { orderItemService } from "../services/orderItem.service";
 
 export const paymentController = {
   createPaymentIntent: async (req: Request, res: Response) => {
@@ -82,6 +83,17 @@ export const paymentController = {
         latitude: userLatitude,
         longitude: userLongitude,
       })
+
+      const cartItemsMapped = Object.values(cart).map((item) => {
+        return {
+          quantity: item.quantity,
+          order_id: order.id,
+          product_id: item.id,
+          unit_price: item.price,
+        }
+      });
+
+      await orderItemService.createMany(cartItemsMapped);
 
       const result = await paymentService.pay(payment_method_id, payment_intent_id, customer_id);
 
