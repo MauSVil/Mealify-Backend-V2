@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { Request, Response } from "express";
 import { orderService } from "../services/order.service";
+import { rabbitService } from "../services/rabbit.service";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -14,6 +15,13 @@ export const stripeController = {
           const paymentIntent = event.data.object;
           const orderFound = await orderService.findByPaymentIntentId(paymentIntent.id);
           if (!orderFound) throw new Error('Order not found');
+
+          await rabbitService.publishMessage('payments', 'order.payment.success', {
+            orderId: orderFound.id,
+            userId: orderFound.user_id,
+            status: 'in_progress',
+            paymentStatus: 'completed',
+          });
 
           await orderService.updateOne(orderFound.id, { status: 'in_progress', payment_status: 'completed' });
           break;
