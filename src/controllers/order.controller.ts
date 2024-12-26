@@ -1,10 +1,16 @@
 import { Request, Response } from 'express';
 import { orderService } from '../services/order.service';
+import { RequestWithAuth } from '../types/Global.type';
+import { userService } from '../services/user.service';
 
 export const orderController = {
-  getAllOrders: async (req: Request, res: Response) => {
+  getAllOrders: async (req: RequestWithAuth, res: Response) => {
     try {
-      const orders = await orderService.findAll();
+      const { userId } = req.auth!;
+      const userFound = await userService.getUserByClerkId(userId);
+      if (!userFound?.id) throw new Error('User not found');
+    
+      const orders = await orderService.findAll(userFound.id);
       res.json(orders);
     } catch (error) {
       if (error instanceof Error) {

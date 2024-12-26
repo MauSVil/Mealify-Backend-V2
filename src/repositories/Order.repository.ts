@@ -4,8 +4,11 @@ import { Order } from "../types/Order.type";
 const prisma = new PrismaClient();
 
 export const OrderRepository = {
-  findAll: async (includeRelations: Prisma.ordersInclude) => {
+  findAll: async (user_id: number, includeRelations: Prisma.ordersInclude) => {
     return await prisma.orders.findMany({
+      where: {
+        user_id
+      },
       include: includeRelations,
       orderBy: {
         created_at: 'desc',

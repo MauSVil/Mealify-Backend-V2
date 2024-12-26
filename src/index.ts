@@ -36,7 +36,7 @@ app.use('/restaurants', restaurantRoutes);
 app.use('/user-addresses', requireAuth(), userAddressRoutes);
 app.use('/products', productRoutes);
 app.use('/payments', requireAuth(), paymentRoutes);
-app.use('/orders', orderRoutes);
+app.use('/orders', requireAuth(), orderRoutes);
 app.use('/stripe', stripeRoutes);
 
 app.listen(PORT, () => {
