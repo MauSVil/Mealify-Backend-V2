@@ -3,7 +3,7 @@ import { Order } from "../types/Order.type";
 
 export const orderService = {
   findAll: async () => {
-    return await OrderRepository.findAll();
+    return await OrderRepository.findAll({ restaurants: true });
   },
   findById: async (id: number) => {
     return await OrderRepository.findById(id);

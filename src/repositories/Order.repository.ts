@@ -1,12 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { Order } from "../types/Order.type";
-import { UserAddress } from "../types/UserAddress.type";
 
 const prisma = new PrismaClient();
 
 export const OrderRepository = {
-  findAll: async () => {
-    return await prisma.orders.findMany();
+  findAll: async (includeRelations: Record<string, boolean> = {}) => {
+    return await prisma.orders.findMany({
+      include: includeRelations
+    });
   },
   findById: async (id: number) => {
     return await prisma.orders.findUnique({
