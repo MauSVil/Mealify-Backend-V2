@@ -47,6 +47,7 @@ const webSocketService = {
   },
 
   emitToRoom(roomId: string, message: WebSocketMessage): void {
+    console.log(`Emitting message to room: ${roomId}`);
     io?.to(String(roomId)).emit("message", message);
   },
 

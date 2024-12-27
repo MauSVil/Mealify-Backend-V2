@@ -12,7 +12,7 @@ export const stripeController = {
   handleWebhook: async (req: Request, res: Response) => {
     const sig = req.headers['stripe-signature']!;
     try {
-      const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+      const event = await stripe.webhooks.constructEventAsync(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
       switch (event.type) {
         case 'payment_intent.succeeded': {
           const paymentIntent = event.data.object;
@@ -48,6 +48,7 @@ export const stripeController = {
       }
     }
     catch (err) {
+      console.error(err);
       if (err instanceof Error) {
         res.status(400).send(`Webhook Error: ${err.message}`);
         return;

@@ -5,7 +5,7 @@ export const orderSchema = z.object({
   user_id: z.number().min(1, 'El ID del usuario es obligatorio'),
   restaurant_id: z.number().min(1, 'El ID del restaurante es obligatorio'),
   driver_id: z.number().optional(),
-  status: z.enum(['pending', 'in_progress', 'delivered', 'cancelled']).default('pending'),
+  status: z.enum(['pending', 'preparing', 'ready_for_pickup', 'in_progress', 'delivered', 'cancelled']).default('pending'),
   payment_status: z.enum(['pending', 'completed', 'failed', 'rejected']).default('pending'),
   total_price: z.coerce.number().nonnegative('El precio total debe ser positivo'),
   delivery_fee: z.coerce.number().nonnegative('La tarifa de entrega debe ser positiva'),

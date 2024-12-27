@@ -127,6 +127,8 @@ model orders {
 
 enum OrderStatus {
   pending
+  preparing
+  ready_for_pickup
   in_progress
   delivered
   cancelled
