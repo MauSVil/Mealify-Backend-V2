@@ -19,12 +19,6 @@ export const paymentService = {
 
     const totalFinal = Math.ceil(desiredNetAmount / (1 - stripePercentage));
 
-    console.log('------ Desglose ------');
-    console.log(`Monto neto deseado: ${desiredNetAmount.toFixed(2)} MXN`);
-    console.log(`Monto total a cobrar: ${totalFinal.toFixed(2)} MXN`);
-    console.log(`Costo de envio: ${shippingCost.toFixed(2)} MXN`);
-    console.log('--------------------------------');
-
     return totalFinal;
   },
   createCustomer: async (name: string, email: string) => {
