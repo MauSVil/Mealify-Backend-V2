@@ -9,6 +9,7 @@ import productRoutes from './routes/product.route';
 import paymentRoutes from './routes/payment.route';
 import orderRoutes from './routes/order.route';
 import stripeRoutes from './routes/stripe.route';
+import deliveryDriverRoutes from './routes/deliveryDriver.route';
 
 import { rabbitService } from './services/rabbit.service';
 
@@ -41,6 +42,7 @@ app.use('/products', productRoutes);
 app.use('/payments', requireAuth(), paymentRoutes);
 app.use('/orders', requireAuth(), orderRoutes);
 app.use('/stripe', stripeRoutes);
+app.use('/delivery-drivers', deliveryDriverRoutes);
 
 const startServer = async () => {
   try {

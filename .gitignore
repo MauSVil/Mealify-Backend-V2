@@ -1,2 +1,31 @@
-node_modules
+# Node modules
+node_modules/
+
+# Environment variables
 .env
+
+# Build output
+dist/
+
+# Prisma files that should not be committed
+prisma/*.env    # Ignorar archivos .env en la carpeta prisma
+prisma/migrations/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional: If you're using Docker
+docker-compose.override.yml

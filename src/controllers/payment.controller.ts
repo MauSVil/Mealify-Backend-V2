@@ -56,12 +56,6 @@ export const paymentController = {
       const restaurant = await restaurantsService.getRestaurantById(restaurantId);
       if (!restaurant) throw new Error('Restaurant not found');
 
-      console.log('------ Orden ------');
-      console.log(`Usuario: ${user.id}`);
-      console.log(`Restaurante: ${restaurant.id}`);
-      console.log(`Delivery Fee: ${restaurant.delivery_fee.toNumber()}`);
-      console.log('-------------------');
-
       const amount = Object.values(cart).reduce(
         (acc, { price, quantity }) => acc + price * quantity,
         0,

@@ -2,6 +2,9 @@ import Stripe from "stripe";
 import { Request, Response } from "express";
 import { orderService } from "../services/order.service";
 import { rabbitService } from "../services/rabbit.service";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 

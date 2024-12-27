@@ -1,4 +1,7 @@
 import Stripe from 'stripe';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -15,12 +18,6 @@ export const paymentService = {
     const stripePercentage = stripeComission / 100;
 
     const totalFinal = Math.ceil(desiredNetAmount / (1 - stripePercentage));
-
-    console.log('------ Desglose ------');
-    console.log(`Monto neto deseado: ${desiredNetAmount.toFixed(2)} MXN`);
-    console.log(`Monto total a cobrar: ${totalFinal.toFixed(2)} MXN`);
-    console.log(`Costo de envio: ${shippingCost.toFixed(2)} MXN`);
-    console.log('--------------------------------');
 
     return totalFinal;
   },

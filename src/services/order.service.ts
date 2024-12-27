@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { OrderRepository } from "../repositories/Order.repository"
 import { Order } from "../types/Order.type";
 
@@ -5,8 +6,8 @@ export const orderService = {
   findAll: async (user_id: number) => {
     return await OrderRepository.findAll(user_id, { restaurants: true, order_items: true });
   },
-  findById: async (id: number) => {
-    return await OrderRepository.findById(id, { order_items: { include: { products: true } } });
+  findById: async ({ id, includeObj }: { id: number, includeObj: Prisma.ordersInclude }) => {
+    return await OrderRepository.findById(id, includeObj);
   },
   findByPaymentIntentId: async (paymentIntentId: string) => {
     return await OrderRepository.findByPaymentIntentId(paymentIntentId);
