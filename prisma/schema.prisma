@@ -27,10 +27,10 @@ model delivery_drivers {
   vehicle_type  String?   @db.VarChar(50)
   license_plate String?   @db.VarChar(20)
   is_active     Boolean   @default(true)
-  longitude     Decimal   @db.Decimal(9, 6)
-  latitude      Decimal   @db.Decimal(9, 6)
   created_at    DateTime? @default(now()) @db.Timestamp(6)
   updated_at    DateTime? @default(now()) @db.Timestamp(6)
+  latitude      Decimal?  @db.Decimal(9, 6)
+  longitude     Decimal?  @db.Decimal(9, 6)
   orders        orders[]
 }
 

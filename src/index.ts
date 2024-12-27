@@ -8,6 +8,7 @@ import productRoutes from './routes/product.route';
 import paymentRoutes from './routes/payment.route';
 import orderRoutes from './routes/order.route';
 import stripeRoutes from './routes/stripe.route';
+import deliveryDriverRoutes from './routes/deliveryDriver.route';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,6 +39,7 @@ app.use('/products', productRoutes);
 app.use('/payments', requireAuth(), paymentRoutes);
 app.use('/orders', requireAuth(), orderRoutes);
 app.use('/stripe', stripeRoutes);
+app.use('/delivery-drivers', deliveryDriverRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
