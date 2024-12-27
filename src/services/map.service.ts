@@ -1,20 +1,21 @@
 import axios from "axios";
 import { GoogleMapsDirectionsResponse } from "../types/GoogleMaps.type";
+import { Decimal } from "@prisma/client/runtime/library";
 
 export const mapService = {
   getEstimatedTime: (origin: { lat: number, lon: number }, destination: { lat: number, lon: number }) => {
     // Call Google Maps API to get the estimated time
   },
-  getDistance: (origin: { lat: number, lon: number }, destination: { lat: number, lon: number }) => {
+  getDistance: (origin: { lat: number | Decimal, lon: number | Decimal }, destination: { lat: number | Decimal, lon: number | Decimal }) => {
     const toRadians = (degrees: number): number => degrees * (Math.PI / 180);
 
     const R = 6371;
-    const dLat = toRadians(destination.lat - origin.lat);
-    const dLon = toRadians(destination.lon - origin.lon);
+    const dLat = toRadians(Number(destination.lat) - Number(origin.lat));
+    const dLon = toRadians(Number(destination.lon) - Number(origin.lon));
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRadians(origin.lat)) *
-        Math.cos(toRadians(destination.lat)) *
+      Math.cos(toRadians(Number(origin.lat))) *
+        Math.cos(toRadians(Number(destination.lat))) *
         Math.sin(dLon / 2) *
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));

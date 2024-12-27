@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime/library";
 import { DeliveryDriverRepository } from "../repositories/DeliveryDriver.repository";
 import { DeliveryDriver } from "../types/DeliveryDriver.type";
 import { mapService } from "./map.service";
@@ -19,7 +20,7 @@ export const deliveryDriverService = {
     const deliveryDriver = await DeliveryDriverRepository.deleteById(id);
     return deliveryDriver;
   },
-  findCandidates: async (restaurantLocation: { longitude: number; latitude: number }, userLocation: { longitude: number; latitude: number }) => {
+  findCandidates: async (restaurantLocation: { longitude: Decimal; latitude: Decimal }, userLocation: { longitude: Decimal; latitude: Decimal }) => {
     const { longitude, latitude } = restaurantLocation;
     const { longitude: userLongitude, latitude: userLatitude } = userLocation;
     const deliveryDrivers = await DeliveryDriverRepository.findAll();

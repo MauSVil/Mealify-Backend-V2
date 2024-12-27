@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime/library";
 import { z } from "zod";
 
 export const deliveryDriverSchema = z.object({
@@ -8,8 +9,8 @@ export const deliveryDriverSchema = z.object({
   clerk_user_id: z.string(),
   vehicleType: z.string().optional(),
   is_active: z.boolean().default(true),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
+  latitude:  z.instanceof(Decimal).optional().nullable(),
+  longitude: z.instanceof(Decimal).optional().nullable(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });

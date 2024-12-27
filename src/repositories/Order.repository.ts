@@ -15,13 +15,13 @@ export const OrderRepository = {
       }
     });
   },
-  findById: async (id: number, includeRelations: Prisma.ordersInclude) => {
+  findById: async <T extends Prisma.ordersInclude>({ id, includeRelations }: {id: number, includeRelations?: T}) => {
     return await prisma.orders.findUnique({
       where: {
         id: id,
       },
       include: includeRelations
-    });
+    }) as Prisma.ordersGetPayload<{ include: T }>
   },
   findByPaymentIntentId: async (paymentIntentId: string) => {
     return await prisma.orders.findFirst({

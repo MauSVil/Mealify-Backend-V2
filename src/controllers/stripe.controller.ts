@@ -25,8 +25,6 @@ export const stripeController = {
             status: 'in_progress',
             paymentStatus: 'completed',
           });
-
-          await orderService.updateOne(orderFound.id, { status: 'in_progress', payment_status: 'completed' });
           break;
         }
         case 'payment_intent.canceled': {

@@ -97,11 +97,15 @@ export const rabbitService = {
                     console.log(`Received message with key ${consumer.routingKey}:`, content);
 
                     try {
-                        await consumer.handler(content); // Procesar el mensaje
-                        ch.ack(msg); // Confirmar recepción
+                        await consumer.handler(content);
+                        ch.ack(msg);
                     } catch (error) {
-                        console.error('Error processing message:', error);
-                        ch.nack(msg, false, false); // Rechazar sin reenviar
+                        if (error instanceof Error) {
+                            console.log('Error processing message:', error.message);
+                        } else {
+                            console.error('Error processing message:', error);
+                        }
+                        ch.nack(msg, false, false);
                     }
                 }
             });

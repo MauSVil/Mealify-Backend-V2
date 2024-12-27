@@ -8,14 +8,14 @@ export const deliveryDriverController = {
       const { id } = req.params;
       if (!id) throw new Error('Id is required');
 
-      const orderFound = await orderService.findById({ id: Number(id), includeObj: { restaurants: true } });
+      const orderFound = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true } });
       if (!orderFound?.id) throw new Error('Order not found');
 
       const { restaurants, longitude, latitude } = orderFound;
 
       const candidates = await deliveryDriverService.findCandidates(
-        { longitude: restaurants.longitude.toNumber(), latitude: restaurants.latitude.toNumber() },
-        { longitude: longitude.toNumber(), latitude: latitude.toNumber() },
+        { longitude: restaurants.longitude, latitude: restaurants.latitude },
+        { longitude: longitude, latitude: latitude },
       );
       res.status(200).json(candidates);
     } catch (error) {

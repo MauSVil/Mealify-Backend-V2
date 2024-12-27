@@ -12,8 +12,11 @@ import stripeRoutes from './routes/stripe.route';
 import deliveryDriverRoutes from './routes/deliveryDriver.route';
 
 import { rabbitService } from './services/rabbit.service';
+import { createServer } from "http";
+import webSocketService from "./services/webSocket.service";
 
 const app = express();
+const server = createServer(app);
 const PORT = process.env.PORT || 3000;
 
 app.use((req, res, next) => {
@@ -44,13 +47,15 @@ app.use('/orders', requireAuth(), orderRoutes);
 app.use('/stripe', stripeRoutes);
 app.use('/delivery-drivers', deliveryDriverRoutes);
 
+webSocketService.initialize(server);
+
 const startServer = async () => {
   try {
     await rabbitService.connect();
 
     await rabbitService.registerConsumers();
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });
 
