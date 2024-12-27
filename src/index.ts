@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-  res.send('home')
+  res.status(200).send('home')
 });
 
 app.get("/version", (req, res) => {
