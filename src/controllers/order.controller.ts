@@ -24,7 +24,7 @@ export const orderController = {
     try {
       const { id } = req.params;
       if (!id) throw new Error('Id is required');
-      const order = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true, order_items: { include: { products: true }  } } });
+      const order = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true, delivery_drivers: true, order_items: { include: { products: true }  } } });
       res.json(order);
     } catch (error) {
       if (error instanceof Error) {
