@@ -27,8 +27,8 @@ export const deliveryDriverService = {
     const activeDrivers = deliveryDrivers.filter(driver => driver.is_active);
 
     const candidates = activeDrivers.map(driver => {
-      const distanceToRestaurant = mapService.getDistance({ lat: latitude, lon: longitude }, { lat: 99.12312, lon: -87.123123 });
-      const distanceToUser = mapService.getDistance({ lat: userLatitude, lon: userLongitude }, { lat: 99.12312, lon: -87.123123 });
+      const distanceToRestaurant = mapService.getDistance({ lat: latitude, lon: longitude }, { lat: driver.latitude!, lon: driver.longitude! });
+      const distanceToUser = mapService.getDistance({ lat: userLatitude, lon: userLongitude }, { lat: driver.latitude!, lon: driver.longitude! });
 
       return {
         ...driver,

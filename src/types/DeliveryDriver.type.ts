@@ -8,6 +8,8 @@ export const deliveryDriverSchema = z.object({
   clerk_user_id: z.string(),
   vehicleType: z.string().optional(),
   is_active: z.boolean().default(true),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
