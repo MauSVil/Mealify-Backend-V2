@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 import { Request, Response } from "express";
 import { orderService } from "../services/order.service";
-import { rabbitService } from "../services/rabbit.service";
 import dotenv from 'dotenv';
+import { orderItemService } from "../services/orderItem.service";
 
 dotenv.config();
 
@@ -16,15 +16,33 @@ export const stripeController = {
       switch (event.type) {
         case 'payment_intent.succeeded': {
           const paymentIntent = event.data.object;
-          const orderFound = await orderService.findByPaymentIntentId(paymentIntent.id);
-          if (!orderFound) throw new Error('Order not found');
+          const metadata = paymentIntent.metadata;
 
-          await rabbitService.publishMessage('payments', 'order.payment.success', {
-            orderId: orderFound.id,
-            userId: orderFound.user_id,
-            status: 'in_progress',
-            paymentStatus: 'completed',
-          });
+          const order = await orderService.createOne({
+            payment_intent_id: paymentIntent.id,
+            status: 'pending',
+            payment_status: 'completed',
+            user_id: Number(metadata.user_id),
+            restaurant_id: Number(metadata.restaurant),
+            total_price: Number(metadata.total_price),
+            delivery_fee: Number(metadata.delivery_fee),
+            latitude: Number(metadata.userLatitude),
+            longitude: Number(metadata.userLongitude),
+          })
+
+          const cartItems = JSON.parse(metadata.cart);
+          const mappedCartItems = Object.keys(cartItems).map((key) => {
+            const item = cartItems[key];
+            return {
+              order_id: order.id!,
+              product_id: Number(key),
+              quantity: Number(item.quantity),
+              unit_price: Number(item.price),
+            }
+          })
+
+          await orderItemService.createMany(mappedCartItems);
+  
           break;
         }
         case 'payment_intent.canceled': {
@@ -46,6 +64,7 @@ export const stripeController = {
         //   break;
         // }
       }
+      res.status(200).send();
     }
     catch (err) {
       console.error(err);

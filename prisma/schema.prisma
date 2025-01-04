@@ -127,11 +127,11 @@ model orders {
 
 enum OrderStatus {
   pending
-  preparing
-  ready_for_pickup
   in_progress
   delivered
   cancelled
+  preparing
+  ready_for_pickup
 }
 
 enum PaymentStatus {

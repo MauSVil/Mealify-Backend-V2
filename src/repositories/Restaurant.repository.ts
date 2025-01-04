@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import { Restaurant } from "../types/Restaurant.type";
-
-const prisma = new PrismaClient();
 
 export const RestaurantRepository = {
   findAll: async () => {

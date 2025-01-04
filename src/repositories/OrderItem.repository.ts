@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import { OrderItem } from "../types/OrderItem.type";
-
-const prisma = new PrismaClient();
 
 export const OrderItemRepository = {
   findAll: async () => {

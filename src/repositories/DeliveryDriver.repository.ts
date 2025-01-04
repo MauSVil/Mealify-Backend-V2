@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../prisma';
 import { DeliveryDriver } from '../types/DeliveryDriver.type';
 
-const prisma = new PrismaClient();
 
 export const DeliveryDriverRepository = {
   findAll: async (): Promise<DeliveryDriver[]> => {

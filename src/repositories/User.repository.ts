@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from "../prisma";
 import type { User } from "../types/User.type";
-
-const prisma = new PrismaClient();
 
 export const UserRepository = {
   findAll: async (): Promise<User[]> => {

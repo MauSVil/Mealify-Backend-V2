@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import { Product } from "../types/Product.type";
 
-const prisma = new PrismaClient();
 
 export const ProductRepository = {
   findAll: async () => {

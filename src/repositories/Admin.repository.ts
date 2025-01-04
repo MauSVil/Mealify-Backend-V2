@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { Admin } from '../types/Admin.type';
-
-const prisma = new PrismaClient();
+import { prisma } from '../prisma';
 
 export const AdminRepository = {
   findAll: async (): Promise<Admin[]> => {

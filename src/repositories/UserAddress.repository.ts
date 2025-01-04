@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import { UserAddress } from "../types/UserAddress.type";
-
-const prisma = new PrismaClient();
 
 export const UserAddressRespository = {
   findAll: async () => {

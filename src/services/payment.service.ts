@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
+import { userService } from './user.service';
 
 dotenv.config();
 
@@ -62,5 +63,49 @@ export const paymentService = {
     });
 
     return result;
+  },
+  generateParams: async (
+    { email, amount, shippingCostPerKm, restaurant, userLatitude, userLongitude, clerkId, cart }:
+    { email: string, amount: number, shippingCostPerKm: number, restaurant: string, userLatitude: string, userLongitude: string, clerkId: string, cart: Record<string, any> }
+  ) => {
+    const customers = await stripe.customers.list();
+    const userFound = await userService.getUserByClerkId(clerkId)
+
+    if (!userFound) throw new Error('User not found');
+
+    let customer = customers.data.find((customer) => customer.email === email);
+    if (!customer) {
+      customer = await stripe.customers.create({ email });
+    }
+
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer.id },
+      { apiVersion: '2020-08-27' },
+    );
+
+    const totalFinal = paymentService.getTotal(amount, shippingCostPerKm);
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.ceil(totalFinal * 100),
+      currency: 'mxn',
+      customer: customer.id,
+      payment_method_types: ['card'],
+      metadata: {
+        email,
+        restaurant,
+        userLatitude: userLatitude,
+        userLongitude: userLongitude,
+        total_price: totalFinal,
+        delivery_fee: shippingCostPerKm,
+        user_id: userFound.id!,
+        cart: JSON.stringify(cart),
+      },
+    });
+
+    return {
+      paymentIntent: paymentIntent.client_secret,
+      ephemeralKey: ephemeralKey.secret,
+      customer: customer.id,
+    };
   }
 }
