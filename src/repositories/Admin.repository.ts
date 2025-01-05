@@ -12,6 +12,13 @@ export const AdminRepository = {
       },
     });
   },
+  findByClerkId: async (clerkId: string): Promise<Admin | null> => {
+    return await prisma.admins.findFirst({
+      where: {
+        clerk_user_id: clerkId,
+      },
+    });
+  },
   createOne: async (adminData: Omit<Admin, 'id' | 'createdAt' | 'updatedAt'>): Promise<Admin> => {
     return await prisma.admins.create({
       data: adminData

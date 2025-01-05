@@ -1,5 +1,7 @@
 import express from "express";
+import cors from "cors";
 import { requireAuth } from "@clerk/express";
+import { LooseAuthProp } from '@clerk/clerk-sdk-node'
 
 import userRoutes from './routes/user.route';
 import authRoutes from './routes/auth.route';
@@ -28,6 +30,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.status(200).send('home')

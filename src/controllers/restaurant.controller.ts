@@ -1,8 +1,25 @@
 import { Request, Response } from 'express';
 import { restaurantsService } from '../services/restaurant.service';
 import { restaurantSchema } from '../types/Restaurant.type';
+import { RequestWithAuth } from '../types/Global.type';
+import { adminService } from '../services/admin.service';
 
 export const restaurantsController = {
+  getRestaurants: async (req: RequestWithAuth, res: Response) => {
+    try {
+      const { userId } = req.auth!;
+      const adminFound = await adminService.getAdminByClerkId(userId);
+      if (!adminFound) throw new Error('Unauthorized');
+      const restaurants = await restaurantsService.getRestaurantsByAdminId(adminFound.id!);
+      res.status(200).json(restaurants);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
   getAllRestaurants: async (req: Request, res: Response) => {
     try {
       const restaurants = await restaurantsService.getRestaurants();
@@ -29,10 +46,14 @@ export const restaurantsController = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
-  addRestaurant: async (req: Request, res: Response) => {
+  addRestaurant: async (req: RequestWithAuth, res: Response) => {
     try {
       const body = req.body;
       const file = req.file;
+      const { userId } = req.auth!;
+
+      const adminFound = await adminService.getAdminByClerkId(userId);
+      if (!adminFound) throw new Error('Unauthorized');
 
       if (!file) throw new Error('Missing image file');
 
@@ -41,6 +62,7 @@ export const restaurantsController = {
         ...(body.delivery_fee && { delivery_fee: Number(body.delivery_fee) }),
         latitude: Number(body.latitude),
         longitude: Number(body.longitude),
+        admin_id: adminFound.id!,
       });
 
       const newRestaurant = await restaurantsService.addRestaurant(input, file);

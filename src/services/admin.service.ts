@@ -10,6 +10,10 @@ export const adminService = {
     const admin = await AdminRepository.findById(id);
     return admin;
   },
+  getAdminByClerkId: async (clerkId: string) => {
+    const user = await AdminRepository.findByClerkId(clerkId);
+    return user;
+  },
   updateAdmin: async (id: number, adminData: Admin) => {
     const admin = await AdminRepository.updateOne(id, adminData);
     return admin;

@@ -34,4 +34,18 @@ export const orderController = {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   },
+  getOrderByPaymentIntent: async (req: Request, res: Response) => {
+    try {
+      const { paymentIntent } = req.body;
+      if (!paymentIntent) throw new Error('Payment Intent is required');
+      const order = await orderService.findByPaymentIntentId(paymentIntent);
+      res.json(order);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
 }

@@ -85,6 +85,23 @@ export const paymentService = {
 
     const totalFinal = paymentService.getTotal(amount, shippingCostPerKm);
 
+    const finalCart = Object.keys(cart).reduce((prev, curr) => {
+      const item = cart[curr];
+      const {
+        description,
+        is_available,
+        created_at,
+        updated_at,
+        image_max,
+        image_min,
+        image_med,
+        ...rest
+      } = item;
+      prev[curr] = { ...rest };
+      return prev;
+    }, {} as Record<string, any>);
+
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.ceil(totalFinal * 100),
       currency: 'mxn',
@@ -98,12 +115,13 @@ export const paymentService = {
         total_price: totalFinal,
         delivery_fee: shippingCostPerKm,
         user_id: userFound.id!,
-        cart: JSON.stringify(cart),
+        cart: JSON.stringify(finalCart),
       },
     });
 
     return {
       paymentIntent: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
       ephemeralKey: ephemeralKey.secret,
       customer: customer.id,
     };

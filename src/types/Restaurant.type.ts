@@ -5,7 +5,7 @@ export const restaurantSchema = z.object({
   hero_image_max: z.string().optional(),
   hero_image_med: z.string().optional(),
   hero_image_min: z.string().optional(),
-  adminId: z.number().optional(),
+  admin_id: z.number().optional().nullable(),
   name: z.string().min(1, 'El nombre del restaurante es obligatorio'),
   address: z.string().min(1, 'La dirección es obligatoria'),
   phone: z.string().optional().nullable(),

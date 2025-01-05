@@ -5,6 +5,13 @@ export const RestaurantRepository = {
   findAll: async () => {
     return await prisma.restaurants.findMany();
   },
+  findByAdmin: async (adminId: number) => {
+    return await prisma.restaurants.findMany({
+      where: {
+        admin_id: adminId,
+      },
+    });
+  },
   findById: async (id: number) => {
     return await prisma.restaurants.findUnique({
       where: {

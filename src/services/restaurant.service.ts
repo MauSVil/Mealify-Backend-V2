@@ -7,6 +7,10 @@ export const restaurantsService = {
   getRestaurants: async () => {
     return await RestaurantRepository.findAll();
   },
+  getRestaurantsByAdminId: async (adminId: number) => {
+    const restaurants = await RestaurantRepository.findByAdmin(adminId);
+    return restaurants;
+  },
   getRestaurantById: async (id: number) => {
     return await RestaurantRepository.findById(id);
   },
@@ -38,10 +42,6 @@ export const restaurantsService = {
         longitude: longitude.toNumber(),
       }
     );
-  },
-  getRestaurantsByAdminId: async (adminId: number) => {
-    const restaurants = await RestaurantRepository.findAll();
-    return restaurants.filter(restaurant => restaurant.admin_id === adminId);
   },
   getCloseRestaurants: async (latitude: number, longitude: number) => {
     const restaurants = await RestaurantRepository.findAll();
