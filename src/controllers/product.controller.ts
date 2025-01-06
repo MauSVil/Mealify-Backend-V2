@@ -48,12 +48,14 @@ export const productsController = {
       const body = req.body;
       const file = req.file;
 
+      const businessId = req.headers['x-business-id'];
+
       if (!file) throw new Error('Missing image file');
 
       const input = await productSchema.parseAsync({
         ...body,
         price: Number(body.price),
-        restaurant_id: Number(body.restaurant_id),
+        restaurant_id: Number(businessId as string),
       });
 
       const newProduct = await productService.addProduct(input, file);
