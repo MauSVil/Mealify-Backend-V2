@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: '*' }));
 
 app.get('/', (req, res) => {
   res.status(200).send('home')
