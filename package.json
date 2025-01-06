@@ -12,6 +12,7 @@
     "run:prisma": "pnpm prisma:pull && pnpm prisma:generate"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.10.2",
     "typescript": "^5.7.2"
