@@ -6,6 +6,9 @@ export const orderService = {
   findAll: async (user_id: number) => {
     return await OrderRepository.findAll(user_id, { restaurants: true, order_items: true });
   },
+  findByRestaurantId: async (restaurantId: number) => {
+    return await OrderRepository.findByRestaurantId(restaurantId, { order_items: { include: { products: true }} });
+  },
   findById: async ({ id, includeRelations }: { id: number, includeRelations?: Prisma.ordersInclude }) => {
     return await OrderRepository.findById({ id, includeRelations });
   },

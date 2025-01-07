@@ -14,6 +14,17 @@ export const OrderRepository = {
       }
     });
   },
+  findByRestaurantId: async (restaurantId: number, includeRelations: Prisma.ordersInclude) => {
+    return await prisma.orders.findMany({
+      where: {
+        restaurant_id: restaurantId,
+      },
+      include: includeRelations,
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+  },
   findById: async <T extends Prisma.ordersInclude>({ id, includeRelations }: {id: number, includeRelations?: T}) => {
     return await prisma.orders.findUnique({
       where: {

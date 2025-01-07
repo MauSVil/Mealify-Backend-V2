@@ -4,6 +4,20 @@ import { RequestWithAuth } from '../types/Global.type';
 import { userService } from '../services/user.service';
 
 export const orderController = {
+  getOrdersByRestaurant: async (req: Request, res: Response) => {
+    try {
+      const businessId = req.headers['x-business-id'];
+      if (!businessId) throw new Error('Business Id is required');
+      const orders = await orderService.findByRestaurantId(Number(businessId as string));
+      res.json(orders);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
   getAllOrders: async (req: RequestWithAuth, res: Response) => {
     try {
       const { userId } = req.auth!;
