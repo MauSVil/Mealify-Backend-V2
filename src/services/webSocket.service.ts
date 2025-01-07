@@ -58,10 +58,10 @@ const webSocketService = {
     }
   },
 
-  broadcast(message: WebSocketMessage, excludeClientId: string | null = null): void {
+  broadcast(key: string, message: WebSocketMessage, excludeClientId: string | null = null): void {
     io?.sockets.sockets.forEach((socket: Socket) => {
       if (socket.id !== excludeClientId) {
-        socket.emit("message", message);
+        socket.emit(key, message);
       }
     });
   }
