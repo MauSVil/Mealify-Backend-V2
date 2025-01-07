@@ -20,6 +20,7 @@ const server = createServer(app);
 const PORT = process.env.PORT || 3000;
 
 app.use((req, res, next) => {
+  console.log(req.originalUrl, 'req.originalUrl');
   if (req.originalUrl === "/stripe/webhook") {
     next();
   } else {
