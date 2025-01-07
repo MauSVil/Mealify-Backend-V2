@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { orderService } from "../services/order.service";
 import dotenv from 'dotenv';
 import { orderItemService } from "../services/orderItem.service";
-import webSocketService from "src/services/webSocket.service";
+import webSocketService from "../services/webSocket.service";
 
 dotenv.config();
 
