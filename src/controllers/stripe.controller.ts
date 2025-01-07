@@ -44,7 +44,7 @@ export const stripeController = {
 
           await orderItemService.createMany(mappedCartItems);
 
-          await webSocketService.broadcast('new-order', { type: 'new-order', order });
+          await webSocketService.emitToRoom('new-order', order.restaurant_id.toString(), { type: 'new-order', order });
   
           break;
         }

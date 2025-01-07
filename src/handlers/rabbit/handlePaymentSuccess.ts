@@ -11,7 +11,7 @@ export const handlePaymentSuccess = async (msg: any) => {
 
   // Notify Restaurant
   await orderService.updateOne(Number(orderId), { status: 'preparing', payment_status: 'completed' });
-  webSocketService.emitToRoom(orderId, { type: 'order_status_change', payload: { status: 'preparing' } });
+  webSocketService.emitToRoom('message', orderId, { type: 'order_status_change', payload: { status: 'preparing' } });
 
   // await sleep(15000);
   // await orderService.updateOne(Number(orderId), { status: 'ready_for_pickup' });

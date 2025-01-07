@@ -39,6 +39,7 @@ const webSocketService = {
         console.log("Order assigned message received");
         break;
       case 'joinRoom':
+        console.log(`${socket.id} joining room: ${data.roomId}`);
         socket.join(String(data.roomId));
         break;
       default:
@@ -46,9 +47,9 @@ const webSocketService = {
     }
   },
 
-  emitToRoom(roomId: string, message: WebSocketMessage): void {
+  emitToRoom(key: string, roomId: string, message: WebSocketMessage): void {
     console.log(`Emitting message to room: ${roomId}`);
-    io?.to(String(roomId)).emit("message", message);
+    io?.to(String(roomId)).emit(key, message);
   },
 
   sendToClient(clientId: string, message: WebSocketMessage): void {
