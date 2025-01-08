@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { orderService } from '../services/order.service';
 import { RequestWithAuth } from '../types/Global.type';
 import { userService } from '../services/user.service';
+import webSocketService from 'src/services/webSocket.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -54,6 +55,24 @@ export const orderController = {
       if (!paymentIntent) throw new Error('Payment Intent is required');
       const order = await orderService.findByPaymentIntentId(paymentIntent);
       res.json(order);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
+  updateOrder: async (req: Request, res: Response) => {
+    try {
+      const { id, ...rest } = req.body;
+      if (!id) throw new Error('Id is required');
+      const updatedOrder = await orderService.updateOne(id, rest);
+      if (rest.status) {
+        await webSocketService.emitToRoom('message', String(updatedOrder.id), { type: 'order_status_change', payload: { status: rest.status } });
+      }
+
+      res.json(updatedOrder);
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ message: error.message });
