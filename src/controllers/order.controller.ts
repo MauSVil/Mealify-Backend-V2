@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { orderService } from '../services/order.service';
 import { RequestWithAuth } from '../types/Global.type';
 import { userService } from '../services/user.service';
-import webSocketService from 'src/services/webSocket.service';
+import webSocketService from '../services/webSocket.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -24,7 +24,7 @@ export const orderController = {
       const { userId } = req.auth!;
       const userFound = await userService.getUserByClerkId(userId);
       if (!userFound?.id) throw new Error('User not found');
-    
+
       const orders = await orderService.findAll(userFound.id);
       res.json(orders);
     } catch (error) {
@@ -39,7 +39,7 @@ export const orderController = {
     try {
       const { id } = req.params;
       if (!id) throw new Error('Id is required');
-      const order = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true, delivery_drivers: true, order_items: { include: { products: true }  } } });
+      const order = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true, delivery_drivers: true, order_items: { include: { products: true } } } });
       res.json(order);
     } catch (error) {
       if (error instanceof Error) {
