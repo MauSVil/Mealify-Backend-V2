@@ -18,7 +18,7 @@ export const orderService = {
   createOne: async (data: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>) => {
     return await OrderRepository.createOne(data);
   },
-  updateOne: async (id: number, data: any) => {
+  updateOne: async (id: number, data: Partial<Order>) => {
     return await OrderRepository.updateOne(id, data);
   },
   deleteOne: async (id: number) => {

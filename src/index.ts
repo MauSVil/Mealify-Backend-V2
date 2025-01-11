@@ -14,6 +14,7 @@ import deliveryDriverRoutes from './routes/deliveryDriver.route';
 
 import { createServer } from "http";
 import webSocketService from "./services/webSocket.service";
+import getRedisInstance from "./services/redis.service";
 
 const app = express();
 const server = createServer(app);
@@ -38,18 +39,20 @@ app.get("/version", (req, res) => {
   res.send("1.0.0");
 });
 
+// TODO: Fix requireAuth() middleware
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/restaurants', restaurantRoutes);
 app.use('/user-addresses', requireAuth(), userAddressRoutes);
 app.use('/products', productRoutes);
 app.use('/payments', requireAuth(), paymentRoutes);
-app.use('/orders', requireAuth(), orderRoutes);
+app.use('/orders', orderRoutes);
 app.use('/stripe', stripeRoutes);
 app.use('/delivery-drivers', deliveryDriverRoutes);
 
 webSocketService.initialize(server);
 
 server.listen(PORT, () => {
+  getRedisInstance();
   console.log(`Server is running on port ${PORT}`);
 });
