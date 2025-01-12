@@ -102,6 +102,8 @@ export const orderController = {
         //     payload: { orderId },
         // });
 
+        webSocketService.emitToRoom('message', id, { type: 'order_status_change', payload: { status: 'in_progress' } });
+
         res.json({ message: 'Order assigned successfully' });
     } else {
         res.status(409).json({ message: 'Order already assigned' });
