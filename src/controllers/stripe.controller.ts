@@ -29,6 +29,8 @@ export const stripeController = {
             delivery_fee: Number(metadata.delivery_fee),
             latitude: Number(metadata.userLatitude),
             longitude: Number(metadata.userLongitude),
+            plaform_fee_amount: Number(metadata.plaform_fee_amount),
+            delivery_ptg_amount: Number(metadata.delivery_ptg_amount),
           })
 
           const cartItems = JSON.parse(metadata.cart);

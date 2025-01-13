@@ -10,6 +10,8 @@ export const orderSchema = z.object({
   total_price: z.coerce.number().nonnegative('El precio total debe ser positivo'),
   delivery_fee: z.coerce.number().nonnegative('La tarifa de entrega debe ser positiva'),
   payment_intent_id: z.string().min(1, 'El ID del intento de pago es obligatorio'),
+  delivery_ptg_amount: z.coerce.number().nonnegative('El porcentaje de entrega debe ser positivo'),
+  plaform_fee_amount: z.coerce.number().nonnegative('La tarifa de la plataforma debe ser positiva'),
   latitude: z.number(),
   longitude: z.number(),
   createdAt: z.date().optional(),
