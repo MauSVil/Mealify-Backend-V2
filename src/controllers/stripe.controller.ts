@@ -52,16 +52,14 @@ export const stripeController = {
           const adminStripeAcct = restaurantFound.admins?.stripe_account;
 
           const totalAmount = mappedCartItems.reduce((acc, item) => acc + item.unit_price * item.quantity, 0) * 100;
-          console.log('Total Amount for Transfer:', totalAmount);
 
           if (adminStripeAcct) {
             try {
-              const transfer = await stripe.transfers.create({
+              await stripe.transfers.create({
                 amount: totalAmount,
                 currency: 'mxn',
                 destination: adminStripeAcct,
               });
-              console.log('Transfer created successfully:', transfer);
             } catch (error) {
               console.error('Error creating transfer:', error);
             }
