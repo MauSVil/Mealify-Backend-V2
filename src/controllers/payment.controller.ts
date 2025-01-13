@@ -10,7 +10,7 @@ export const paymentController = {
       const { email, amount, restaurant, userLatitude, userLongitude, clerkId, cart, deliveryPtg } = req.body;
       if (!email || !amount || !restaurant || !userLatitude || !userLongitude || !clerkId || !cart || !deliveryPtg ) throw new Error('Missing required fields');
 
-      const restaurantFound = await restaurantsService.getRestaurantById(Number(restaurant));
+      const restaurantFound = await restaurantsService.getRestaurantById({ id: Number(restaurant) });
 
       if (!restaurantFound) throw new Error('Restaurant not found');
       const { latitude, longitude } = restaurantFound;

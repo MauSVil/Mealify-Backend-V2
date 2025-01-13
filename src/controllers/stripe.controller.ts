@@ -4,6 +4,7 @@ import { orderService } from "../services/order.service";
 import dotenv from 'dotenv';
 import { orderItemService } from "../services/orderItem.service";
 import webSocketService from "../services/webSocket.service";
+import { restaurantsService } from "../services/restaurant.service";
 
 dotenv.config();
 
@@ -45,6 +46,12 @@ export const stripeController = {
           })
 
           await orderItemService.createMany(mappedCartItems);
+
+          const restaurantFound = await restaurantsService.getRestaurantById({ id: Number(metadata.restaurant), includeRelations: { admins: true } });
+          
+          const adminStripeAcct = restaurantFound.admins?.stripe_account;
+
+          console.log({ adminStripeAcct });
 
           await webSocketService.emitToRoom('new-order', order.restaurant_id.toString(), { type: 'new-order', order });
   

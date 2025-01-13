@@ -36,7 +36,7 @@ export const restaurantsController = {
     try {
       const { id } = req.params;
       if (!id) throw new Error('Missing restaurant id');
-      const restaurant = await restaurantsService.getRestaurantById(parseInt(id));
+      const restaurant = await restaurantsService.getRestaurantById({ id: parseInt(id) });
       res.status(200).json(restaurant);
     } catch (error) {
       if (error instanceof Error) {

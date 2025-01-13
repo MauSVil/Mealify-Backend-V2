@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { RestaurantRepository } from "../repositories/Restaurant.repository"
 import { Restaurant } from "../types/Restaurant.type";
 import { fileService } from "./file.service";
@@ -11,8 +12,8 @@ export const restaurantsService = {
     const restaurants = await RestaurantRepository.findByAdmin(adminId);
     return restaurants;
   },
-  getRestaurantById: async (id: number) => {
-    return await RestaurantRepository.findById(id);
+  getRestaurantById: async ({ id, includeRelations }: { id: number; includeRelations?: Prisma.restaurantsInclude}) => {
+    return await RestaurantRepository.findById({ id, includeRelations });
   },
   addRestaurant: async (restaurant: Restaurant, file: Express.Multer.File) => {
     const restaurantCreated = await RestaurantRepository.createOne(restaurant);

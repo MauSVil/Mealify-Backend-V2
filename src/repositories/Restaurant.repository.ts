@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../prisma";
 import { Restaurant } from "../types/Restaurant.type";
 
@@ -12,12 +13,13 @@ export const RestaurantRepository = {
       },
     });
   },
-  findById: async (id: number) => {
+  findById: async <T extends Prisma.restaurantsInclude>({id, includeRelations}: { id: number; includeRelations?: T  }) => {
     return await prisma.restaurants.findUnique({
       where: {
         id: id,
       },
-    });
+      include: includeRelations,
+    }) as Prisma.restaurantsGetPayload<{ include: T }>
   },
   createOne: async (restaurantData: Omit<Restaurant, 'id' | 'createdAt' | 'updatedAt'>) => {
     return await prisma.restaurants.create({
