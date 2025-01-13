@@ -51,13 +51,20 @@ export const stripeController = {
           
           const adminStripeAcct = restaurantFound.admins?.stripe_account;
 
+          const totalAmount = cartItems.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0) * 100;
+          console.log('Total Amount for Transfer:', totalAmount);
+
           if (adminStripeAcct) {
-            await stripe.transfers.create({
-              amount: cartItems.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0) * 100,
-              currency: 'mxn',
-              destination: adminStripeAcct,
-              transfer_group: order.id.toString(),
-            });
+            try {
+              const transfer = await stripe.transfers.create({
+                amount: totalAmount,
+                currency: 'mxn',
+                destination: adminStripeAcct,
+              });
+              console.log('Transfer created successfully:', transfer);
+            } catch (error) {
+              console.error('Error creating transfer:', error);
+            }
           }
 
           await webSocketService.emitToRoom('new-order', order.restaurant_id.toString(), { type: 'new-order', order });
