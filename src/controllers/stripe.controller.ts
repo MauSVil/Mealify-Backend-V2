@@ -51,7 +51,7 @@ export const stripeController = {
           
           const adminStripeAcct = restaurantFound.admins?.stripe_account;
 
-          const totalAmount = cartItems.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0) * 100;
+          const totalAmount = mappedCartItems.reduce((acc, item) => acc + item.unit_price * item.quantity, 0) * 100;
           console.log('Total Amount for Transfer:', totalAmount);
 
           if (adminStripeAcct) {
