@@ -51,4 +51,17 @@ export const restaurantsService = {
       return distance < 5;
     });
   },
+  getTotals: async (id: number) => {
+    const restaurants = await RestaurantRepository.findById({ id, includeRelations: { orders: { include: { order_items: true } } } });
+    const total = restaurants.orders.filter(o => o.status === 'delivered' ).reduce((acc, order) => {
+      return acc + order.order_items.reduce((acc, orderItem) => {
+        return acc + orderItem.unit_price.toNumber();
+      }, 0);
+    }, 0);
+    return total;
+  },
+  getDeliveredOrders: async (id: number) => {
+    const restaurants = await RestaurantRepository.findById({ id, includeRelations: { orders: { include: { order_items: true } } } });
+    return restaurants.orders.filter(o => o.status === 'delivered');
+  }
 }

@@ -89,4 +89,32 @@ export const restaurantsController = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
+  getTotals: async (req: Request, res: Response) => {
+    try {
+      const businessId = req.headers['x-business-id'];
+      if (!businessId) throw new Error('Business Id is required');
+      const totals = await restaurantsService.getTotals(parseInt(businessId as string));
+      res.status(200).json(totals);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
+  getDeliveredOrders: async (req: Request, res: Response) => {
+    try {
+      const businessId = req.headers['x-business-id'];
+      if (!businessId) throw new Error('Business Id is required');
+      const orders = await restaurantsService.getDeliveredOrders(parseInt(businessId as string));
+      res.status(200).json(orders);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 };

@@ -8,6 +8,8 @@ const router = Router();
 
 const upload = multer();
 
+router.get('/orders', restaurantsController.getDeliveredOrders);
+router.get('/totals', restaurantsController.getTotals);
 router.get('/admin', requireAuth(), restaurantsController.getRestaurants);
 router.get('/:latitude/:longitude', restaurantsController.getCloseRestaurants);
 router.get('/:id', restaurantsController.getRestaurantById);
