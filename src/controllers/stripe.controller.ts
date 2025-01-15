@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { orderItemService } from "../services/orderItem.service";
 import webSocketService from "../services/webSocket.service";
 import { restaurantsService } from "../services/restaurant.service";
+import { stripeService } from "../services/stripe.service";
 
 dotenv.config();
 
@@ -99,4 +100,20 @@ export const stripeController = {
       res.status(400).send(`Webhook Error`);
     }
   },
+  getTransfers: async (req: Request, res: Response) => {
+    try {
+      const body = req.body;
+      const { acct } = body;
+      if (!acct) throw new Error('Account ID is required');
+      const transfers = await stripeService.getTransfers(acct);
+      const transfersData = transfers.data;
+      res.status(200).json(transfersData);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
