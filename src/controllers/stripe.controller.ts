@@ -102,8 +102,13 @@ export const stripeController = {
   },
   getTransfers: async (req: Request, res: Response) => {
     try {
-      const body = req.body;
-      const { acct } = body;
+      const businessId = req.headers['x-business-id'];
+      if (!businessId) throw new Error('Business Id is required');
+
+      const business = await restaurantsService.getRestaurantById({ id: Number(businessId), includeRelations: { admins: true } });
+      if (!business) throw new Error('Business not found');
+
+      const acct = business.admins?.stripe_account;
       if (!acct) throw new Error('Account ID is required');
       const transfers = await stripeService.getTransfers(acct);
       const transfersData = transfers.data;
