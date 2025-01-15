@@ -8,16 +8,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const paymentService = {
   getTotal: (amount: number, shippingCostPerKm: number, deliveryPtg: string) => {
-    const stripeComission = 7;
     const platformFee = 15;
     const plaformFeeAmount = amount * (platformFee / 100);
-
+    
     const baseShippingCost = 15;
     const shippingCost = shippingCostPerKm + baseShippingCost;
-
+    
     const deliveryPtgAmount = amount * (Number(deliveryPtg) / 100);
-
+    
     const desiredNetAmount = amount + plaformFeeAmount + shippingCost + deliveryPtgAmount;
+    
+    const stripeComission = 7;
     const stripePercentage = stripeComission / 100;
 
     const totalFinal = Math.ceil(desiredNetAmount / (1 - stripePercentage));
@@ -65,7 +66,6 @@ export const paymentService = {
       prev[curr] = { ...rest };
       return prev;
     }, {} as Record<string, any>);
-
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.ceil(totalFinal * 100),
