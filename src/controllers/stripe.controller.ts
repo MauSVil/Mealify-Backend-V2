@@ -77,6 +77,8 @@ export const stripeController = {
           await orderService.updateOne(orderFound.id, { status: 'cancelled', payment_status: 'rejected' });
           break;
         }
+        default:
+          console.log(`Unhandled event type ${event.type}`);
         // case 'charge.updated': {
         //   const charge = event.data.object;
         //   // const orderFound = await orderService.findByPaymentIntentId(charge.payment_intent?.toString()!);
