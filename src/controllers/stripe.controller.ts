@@ -120,5 +120,17 @@ export const stripeController = {
       }
       res.status(500).json({ message: "Internal server error" });
     }
+  },
+  createSession: async (req: Request, res: Response) => {
+    try {
+      const { id } = await stripeService.createExpressAccount();
+      const accountSessions = await stripeService.createAccountSession(id);
+      res.status(200).json({ client_secret: accountSessions.client_secret });
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(500).json({ message: error.message });
+      }
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 }
