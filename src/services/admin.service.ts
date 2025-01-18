@@ -14,7 +14,7 @@ export const adminService = {
     const user = await AdminRepository.findByClerkId(clerkId);
     return user;
   },
-  updateAdmin: async (id: number, adminData: Admin) => {
+  updateAdmin: async (id: number, adminData: Partial<Admin>) => {
     const admin = await AdminRepository.updateOne(id, adminData);
     return admin;
   },

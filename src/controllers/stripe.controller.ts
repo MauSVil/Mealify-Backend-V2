@@ -6,6 +6,8 @@ import { orderItemService } from "../services/orderItem.service";
 import webSocketService from "../services/webSocket.service";
 import { restaurantsService } from "../services/restaurant.service";
 import { stripeService } from "../services/stripe.service";
+import { RequestWithAuth } from "../types/Global.type";
+import { adminService } from "../services/admin.service";
 
 dotenv.config();
 
@@ -127,12 +129,49 @@ export const stripeController = {
     try {
       const { id } = await stripeService.createExpressAccount();
       const accountSessions = await stripeService.createAccountSession(id);
-      res.status(200).json({ client_secret: accountSessions.client_secret });
+      res.status(200).json({ client_secret: accountSessions.client_secret, id });
     } catch (error) {
       if (error instanceof Error) {
         return res.status(500).json({ message: error.message });
       }
       return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+  getAccount: async (req: RequestWithAuth, res: Response) => {
+    try {
+      const { userId } = req.auth!;
+      const adminFound = await adminService.getAdminByClerkId(userId);
+      if (!adminFound) throw new Error('Admin not found');
+
+      const acct = adminFound.stripe_account;
+      if (!acct) throw new Error('Account ID is required');
+
+      const account = await stripeService.getAccount(acct);
+      res.status(200).json(account);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+  generateSignInLink: async (req: RequestWithAuth, res: Response) => {
+    try {
+      const { userId } = req.auth!;
+      const adminFound = await adminService.getAdminByClerkId(userId);
+      if (!adminFound) throw new Error('Admin not found');
+
+      const acct = adminFound.stripe_account;
+      if (!acct) throw new Error('Account ID is required');
+      const link = await stripeService.generateSignInLink(acct);
+      res.status(200).json({ link });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 }

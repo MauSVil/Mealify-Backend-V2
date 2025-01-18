@@ -3,6 +3,7 @@ import cors from "cors";
 import { requireAuth } from "@clerk/express";
 
 import userRoutes from './routes/user.route';
+import adminRoutes from './routes/admin.route';
 import authRoutes from './routes/auth.route';
 import restaurantRoutes from './routes/restaurant.route';
 import userAddressRoutes from './routes/userAddress.route';
@@ -41,6 +42,7 @@ app.get("/version", (req, res) => {
 
 // TODO: Fix requireAuth() middleware
 app.use('/users', userRoutes);
+app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/restaurants', restaurantRoutes);
 app.use('/user-addresses', requireAuth(), userAddressRoutes);

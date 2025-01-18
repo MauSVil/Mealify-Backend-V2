@@ -60,5 +60,23 @@ export const stripeService = {
       },
     });
     return accountLink;
+  },
+  deleteAccounts: async () => {
+    const accounts = await stripe.accounts.list();
+    accounts.data.forEach(async (account) => {
+      if (account.requirements?.disabled_reason || account.future_requirements?.disabled_reason) {
+        await stripe.accounts.del(account.id);
+      } else {
+        console.log(`Account ${account.id} is enabled`);
+      }
+    });
+  },
+  getAccount: async (accountId: string) => {
+    const account = await stripe.accounts.retrieve(accountId);
+    return account;
+  },
+  generateSignInLink: async (accountId: string) => {
+    const link = await stripe.accounts.createLoginLink(accountId);
+    return link;
   }
 };

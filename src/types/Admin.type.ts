@@ -11,6 +11,7 @@ export const adminSchema = z.object({
   stripe_account: z.string().optional().nullable(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
+  onboarding_finished: z.boolean().optional().nullable(),
 });
 
 export type Admin = z.infer<typeof adminSchema>;
