@@ -79,6 +79,22 @@ export const stripeController = {
           await orderService.updateOne(orderFound.id, { status: 'cancelled', payment_status: 'rejected' });
           break;
         }
+        case 'account.updated': {
+          const account = event.data.object;
+          const { id, requirements, future_requirements } = account;
+
+          const adminFound = await adminService.getAdminByStripeId(id);
+          if (!adminFound) throw new Error('Admin not found');
+
+          if (requirements?.disabled_reason || future_requirements?.disabled_reason) {
+            await adminService.updateAdmin(adminFound.id!, { stripe_status: 'error' });
+            break;
+          } else {
+            await adminService.updateAdmin(adminFound.id!, { stripe_status: 'success' });
+          }
+
+          break;
+        }
         default:
           console.log(`Unhandled event type ${event.type}`);
         // case 'charge.updated': {

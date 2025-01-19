@@ -20,6 +20,7 @@ model admins {
   phone               String?       @db.VarChar(10)
   onboarding_finished Boolean?      @default(false)
   restaurants         restaurants[]
+  stripe_status       StripeStatus  @default(error)
 }
 
 model delivery_drivers {
@@ -145,4 +146,9 @@ enum PaymentStatus {
   completed
   failed
   rejected
+}
+
+enum StripeStatus {
+  error
+  success
 }

@@ -19,6 +19,13 @@ export const AdminRepository = {
       },
     });
   },
+  findByStripeId: async (stripeId: string): Promise<Admin | null> => {
+    return await prisma.admins.findFirst({
+      where: {
+        stripe_account: stripeId,
+      },
+    });
+  },
   createOne: async (adminData: Omit<Admin, 'id' | 'createdAt' | 'updatedAt'>): Promise<Admin> => {
     return await prisma.admins.create({
       data: adminData
