@@ -6,7 +6,7 @@ import { mapService } from "./map.service";
 
 export const restaurantsService = {
   getRestaurants: async () => {
-    return await RestaurantRepository.findAll();
+    return await RestaurantRepository.findAll({});
   },
   getRestaurantsByAdminId: async (adminId: number) => {
     const restaurants = await RestaurantRepository.findByAdmin(adminId);
@@ -45,10 +45,10 @@ export const restaurantsService = {
     );
   },
   getCloseRestaurants: async (latitude: number, longitude: number) => {
-    const restaurants = await RestaurantRepository.findAll();
+    const restaurants = await RestaurantRepository.findAll({ includeRelations: { admins: true } });
     return restaurants.filter(restaurant => {
       const distance = mapService.getDistance({ lat: latitude, lon: longitude }, { lat: restaurant.latitude.toNumber(), lon: restaurant.longitude.toNumber() });
-      return distance < 5;
+      return distance < 5 && restaurant.admins?.stripe_status === 'success';
     });
   },
   getTotals: async (id: number) => {
