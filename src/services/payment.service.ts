@@ -10,14 +10,14 @@ export const paymentService = {
   getTotal: (amount: number, shippingCostPerKm: number, deliveryPtg: string) => {
     const platformFee = 15;
     const plaformFeeAmount = amount * (platformFee / 100);
-    
+
     const baseShippingCost = 15;
     const shippingCost = shippingCostPerKm + baseShippingCost;
-    
+
     const deliveryPtgAmount = amount * (Number(deliveryPtg) / 100);
-    
+
     const desiredNetAmount = amount + plaformFeeAmount + shippingCost + deliveryPtgAmount;
-    
+
     const stripeComission = 7;
     const stripePercentage = stripeComission / 100;
 
@@ -32,7 +32,7 @@ export const paymentService = {
   },
   generateParams: async (
     { email, amount, shippingCostPerKm, restaurant, userLatitude, userLongitude, clerkId, cart, deliveryPtg }:
-    { email: string, amount: number, shippingCostPerKm: number, restaurant: string, userLatitude: string, userLongitude: string, clerkId: string, cart: Record<string, any>, deliveryPtg: string }
+      { email: string, amount: number, shippingCostPerKm: number, restaurant: string, userLatitude: string, userLongitude: string, clerkId: string, cart: Record<string, any>, deliveryPtg: string }
   ) => {
     const customers = await stripe.customers.list();
     const userFound = await userService.getUserByClerkId(clerkId)
@@ -73,16 +73,22 @@ export const paymentService = {
       customer: customer.id,
       payment_method_types: ['card'],
       metadata: {
+        user_id: userFound.id!,
+        cart: JSON.stringify(finalCart),
         email,
         restaurant,
         userLatitude: userLatitude,
         userLongitude: userLongitude,
-        total_price: totalFinal,
+        // restaurant
+        restaurantAmount: amount,
+        // delivery
         delivery_fee: shippingCost,
-        plaform_fee_amount: plaformFeeAmount,
-        user_id: userFound.id!,
-        cart: JSON.stringify(finalCart),
         delivery_ptg_amount: deliveryPtgAmount,
+        // platform
+        plaform_fee_amount: plaformFeeAmount,
+
+        // total
+        total_price: totalFinal,
       },
     });
 

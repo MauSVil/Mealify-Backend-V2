@@ -23,21 +23,42 @@ export const stripeController = {
           const paymentIntent = event.data.object;
           const metadata = paymentIntent.metadata;
 
+          const {
+            user_id,
+            restaurant,
+            total_price,
+            delivery_fee,
+            userLatitude,
+            userLongitude,
+            plaform_fee_amount,
+            delivery_ptg_amount,
+            cart,
+
+            amount,
+          } = metadata;
+
           const order = await orderService.createOne({
             payment_intent_id: paymentIntent.id,
             status: 'preparing',
             payment_status: 'completed',
-            user_id: Number(metadata.user_id),
-            restaurant_id: Number(metadata.restaurant),
-            total_price: Number(metadata.total_price),
-            delivery_fee: Number(metadata.delivery_fee),
-            latitude: Number(metadata.userLatitude),
-            longitude: Number(metadata.userLongitude),
-            plaform_fee_amount: Number(metadata.plaform_fee_amount),
-            delivery_ptg_amount: Number(metadata.delivery_ptg_amount),
+            user_id: Number(user_id),
+            restaurant_id: Number(restaurant),
+            total_price: Number(total_price),
+            latitude: Number(userLatitude),
+            longitude: Number(userLongitude),
+
+            // Restaurante
+            amount: Number(amount),
+
+            // Delivery driver
+            delivery_ptg_amount: Number(delivery_ptg_amount),
+            delivery_fee: Number(delivery_fee),
+
+            // Plataforma
+            plaform_fee_amount: Number(plaform_fee_amount),
           })
 
-          const cartItems = JSON.parse(metadata.cart);
+          const cartItems = JSON.parse(cart);
           const mappedCartItems = Object.keys(cartItems).map((key) => {
             const item = cartItems[key];
             return {
@@ -50,26 +71,8 @@ export const stripeController = {
 
           await orderItemService.createMany(mappedCartItems);
 
-          const restaurantFound = await restaurantsService.getRestaurantById({ id: Number(metadata.restaurant), includeRelations: { admins: true } });
-          
-          const adminStripeAcct = restaurantFound.admins?.stripe_account;
-
-          const totalAmount = mappedCartItems.reduce((acc, item) => acc + item.unit_price * item.quantity, 0) * 100;
-
-          if (adminStripeAcct) {
-            try {
-              await stripe.transfers.create({
-                amount: totalAmount,
-                currency: 'mxn',
-                destination: adminStripeAcct,
-              });
-            } catch (error) {
-              console.error('Error creating transfer:', error);
-            }
-          }
-
           await webSocketService.emitToRoom('new-order', order.restaurant_id.toString(), { type: 'new-order', order });
-  
+
           break;
         }
         case 'payment_intent.canceled': {
