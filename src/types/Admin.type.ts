@@ -12,7 +12,8 @@ export const adminSchema = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   onboarding_finished: z.boolean().optional().nullable(),
-  stripe_status: z.enum(['error', 'success'])
+  stripe_status: z.enum(['error', 'success']),
+  customer_id: z.string().nullable().optional(),
 });
 
 export type Admin = z.infer<typeof adminSchema>;

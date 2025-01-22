@@ -78,5 +78,16 @@ export const stripeService = {
   generateSignInLink: async (accountId: string) => {
     const link = await stripe.accounts.createLoginLink(accountId);
     return link;
-  }
+  },
+  createCustomer: async ({ email, metadata }: { email: string; metadata?: Record<string, string> }) => {
+    const customers = await stripe.customers.list();
+    let customer = customers.data.find((customer) => customer.email === email);
+    if (!customer) {
+      customer = await stripe.customers.create({
+        email,
+        metadata
+      });
+    }
+    return customer;
+  },
 };

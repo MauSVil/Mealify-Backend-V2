@@ -19,8 +19,9 @@ model admins {
   second_last_name    String?       @db.VarChar(100)
   phone               String?       @db.VarChar(10)
   onboarding_finished Boolean?      @default(false)
-  restaurants         restaurants[]
   stripe_status       StripeStatus  @default(error)
+  customer_id         String?       @db.VarChar(255)
+  restaurants         restaurants[]
 }
 
 model delivery_drivers {
