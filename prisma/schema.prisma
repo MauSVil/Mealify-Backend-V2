@@ -20,7 +20,6 @@ model admins {
   phone               String?       @db.VarChar(10)
   onboarding_finished Boolean?      @default(false)
   stripe_status       StripeStatus  @default(error)
-  customer_id         String?       @db.VarChar(255)
   restaurants         restaurants[]
 }
 
@@ -119,15 +118,15 @@ model orders {
   status              OrderStatus       @default(pending)
   total_price         Decimal           @db.Decimal(10, 2)
   delivery_fee        Decimal           @db.Decimal(10, 2)
-  amount              Decimal           @db.Decimal(10, 2) @default(0)
-  created_at          DateTime?         @default(now()) @db.Timestamp(6)
-  updated_at          DateTime?         @default(now()) @db.Timestamp(6)
+  created_at          DateTime?         @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?         @default(now()) @db.Timestamptz(6)
   payment_intent_id   String            @db.VarChar(255)
   payment_status      PaymentStatus     @default(pending)
   latitude            Decimal           @db.Decimal(10, 8)
   longitude           Decimal           @db.Decimal(10, 8)
   plaform_fee_amount  Decimal           @db.Decimal(10, 2)
   delivery_ptg_amount Decimal           @db.Decimal(10, 2)
+  amount              Decimal           @default(0) @db.Decimal(10, 2)
   order_items         order_items[]
   delivery_drivers    delivery_drivers? @relation(fields: [driver_id], references: [id], onUpdate: NoAction)
   restaurants         restaurants       @relation(fields: [restaurant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)

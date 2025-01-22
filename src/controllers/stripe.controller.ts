@@ -34,7 +34,7 @@ export const stripeController = {
             delivery_ptg_amount,
             cart,
 
-            amount,
+            restaurantAmount,
           } = metadata;
 
           const order = await orderService.createOne({
@@ -48,7 +48,7 @@ export const stripeController = {
             longitude: Number(userLongitude),
 
             // Restaurante
-            amount: Number(amount),
+            amount: Number(restaurantAmount),
 
             // Delivery driver
             delivery_ptg_amount: Number(delivery_ptg_amount),
