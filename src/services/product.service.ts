@@ -38,11 +38,10 @@ export const productService = {
       }
     );
   },
-  updateProducts: async (products: Record<string, Partial<Product>>) => {
-    const updates = Object.entries(products).map(([id, product]) => {
-      return ProductRepository.updateOne(Number(id), product);
+  updateProducts: async (products: Partial<Product>[]) => {
+    products.forEach(async (product) => {
+      const { id, ...rest } = product;
+      await ProductRepository.updateOne(Number(id!), rest);
     });
-
-    return await Promise.all(updates);
   },
 }
