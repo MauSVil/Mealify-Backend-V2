@@ -47,7 +47,7 @@ app.use('/auth', authRoutes);
 app.use('/restaurants', restaurantRoutes);
 app.use('/user-addresses', requireAuth(), userAddressRoutes);
 app.use('/products', productRoutes);
-app.use('/payments', requireAuth(), paymentRoutes);
+app.use('/payments', paymentRoutes);
 app.use('/orders', orderRoutes);
 app.use('/stripe', stripeRoutes);
 app.use('/delivery-drivers', deliveryDriverRoutes);
@@ -55,6 +55,6 @@ app.use('/delivery-drivers', deliveryDriverRoutes);
 webSocketService.initialize(server);
 
 server.listen(PORT, () => {
-  getRedisInstance();
+  // getRedisInstance();
   console.log(`Server is running on port ${PORT}`);
 });

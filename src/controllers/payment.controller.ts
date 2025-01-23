@@ -8,7 +8,7 @@ export const paymentController = {
   generateParams: async (req: RequestWithAuth, res: Response) => {
     try {
       const { email, amount, restaurant, userLatitude, userLongitude, clerkId, cart, deliveryPtg } = req.body;
-      if (!email || !amount || !restaurant || !userLatitude || !userLongitude || !clerkId || !cart || !deliveryPtg ) throw new Error('Missing required fields');
+      if (!email || !amount || !restaurant || !userLatitude || !userLongitude || !clerkId || !cart || !deliveryPtg) throw new Error('Missing required fields');
 
       const restaurantFound = await restaurantsService.getRestaurantById({ id: Number(restaurant) });
 
@@ -41,5 +41,28 @@ export const paymentController = {
       }
       res.status(500).json({ error: 'Internal server error' });
     }
-  }
+  },
+  generatePaymentReport: async (req: RequestWithAuth, res: Response) => {
+    try {
+      const body = req.body;
+      const { startDate, endDate } = body;
+
+      if (!startDate || !endDate) throw new Error('Missing required fields');
+
+      const { buffer, fileName } = await paymentService.generatePaymentReport({ startDate, endDate });
+
+      res.set({
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+      });
+
+      res.send(buffer);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
 }

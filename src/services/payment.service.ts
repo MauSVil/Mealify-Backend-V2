@@ -1,6 +1,9 @@
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
+import XLSX from 'xlsx';
 import { userService } from './user.service';
+import moment from 'moment';
+import { prisma } from '../prisma';
 
 dotenv.config();
 
@@ -98,5 +101,23 @@ export const paymentService = {
       ephemeralKey: ephemeralKey.secret,
       customer: customer.id,
     };
+  },
+  generatePaymentReport: async ({ startDate, endDate }: { startDate: string, endDate: string }) => {
+    if (!startDate || !endDate) throw new Error('Invalid date range');
+
+    const start = moment(startDate, 'DD/MM/YYYY').startOf('day').toISOString();
+    const end = moment(endDate, 'DD/MM/YYYY').endOf('day').toISOString();
+
+    const workBook = XLSX.utils.book_new();
+    const workSheet = XLSX.utils.json_to_sheet([]);
+    XLSX.utils.book_append_sheet(workBook, workSheet, 'Reporte de pagos');
+    const date = new Date();
+    const fileName = `Reporte de pagos ${date.toISOString()}.xlsx`;
+    const buffer = XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' });
+
+    return {
+      buffer,
+      fileName,
+    }
   }
 }
