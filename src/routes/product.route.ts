@@ -11,5 +11,6 @@ router.get('/restaurant/:id', productsController.getProductsByRestaurantId);
 router.get('/:id', productsController.getProductById);
 router.get('/', productsController.getAllProducts);
 router.post('/', upload.single('image'), productsController.addProduct);
+router.put('/', productsController.updateProducts);
 
 export default router;

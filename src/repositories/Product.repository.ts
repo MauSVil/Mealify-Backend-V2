@@ -23,7 +23,7 @@ export const ProductRepository = {
       data: productData,
     });
   },
-  updateOne: async (id: number, productData: Omit<Product, 'id' | 'restaurant_id' | 'createdAt' | 'updatedAt'>) => {
+  updateOne: async (id: number, productData: Partial<Product>) => {
     return await prisma.products.update({
       where: {
         id: id,

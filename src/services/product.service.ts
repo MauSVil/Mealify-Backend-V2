@@ -38,4 +38,11 @@ export const productService = {
       }
     );
   },
+  updateProducts: async (products: Record<string, Partial<Product>>) => {
+    const updates = Object.entries(products).map(([id, product]) => {
+      return ProductRepository.updateOne(Number(id), product);
+    });
+
+    return await Promise.all(updates);
+  },
 }

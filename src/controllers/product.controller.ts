@@ -68,4 +68,17 @@ export const productsController = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
+  updateProducts: async (req: Request, res: Response) => {
+    try {
+      const body = req.body;
+      const updates = await productService.updateProducts(body);
+      res.status(200).json(updates);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
 };
