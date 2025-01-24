@@ -122,16 +122,23 @@ export const stripeController = {
           const account = event.data.object;
           const { id, requirements, future_requirements } = account;
 
+          console.log({ id });
+          
           const adminFound = await adminService.getAdminByStripeId(id);
-          if (!adminFound) throw new Error('Admin not found');
+
+          console.log({ adminFound });
 
           if (requirements?.disabled_reason || future_requirements?.disabled_reason) {
-            await adminService.updateAdmin(adminFound.id!, { stripe_status: 'error' });
-            await webSocketService.emitToRoom('stripe-status', `admin_${adminFound.id!.toString()}`, { type: 'stripe-status', status: 'error' });
+            if (adminFound) {
+              await adminService.updateAdmin(adminFound.id!, { stripe_status: 'error' });
+              await webSocketService.emitToRoom('stripe-status', `admin_${adminFound.id!.toString()}`, { type: 'stripe-status', status: 'error' });
+            }
             break;
           } else {
-            await adminService.updateAdmin(adminFound.id!, { stripe_status: 'success' });
-            await webSocketService.emitToRoom('stripe-status', `admin_${adminFound.id!.toString()}`, { type: 'stripe-status', status: 'success' });
+            if (adminFound) {
+              await adminService.updateAdmin(adminFound.id!, { stripe_status: 'success' });
+              await webSocketService.emitToRoom('stripe-status', `admin_${adminFound.id!.toString()}`, { type: 'stripe-status', status: 'success' });
+            }
           }
           break;
         }
