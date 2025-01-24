@@ -22,7 +22,7 @@ const server = createServer(app);
 const PORT = process.env.PORT || 3000;
 
 app.use((req, res, next) => {
-  if (req.originalUrl === "/stripe/webhook") {
+  if (req.originalUrl === "/stripe/webhook" || req.originalUrl === "/stripe/webhook2") {
     next();
   } else {
     express.json()(req, res, next);
