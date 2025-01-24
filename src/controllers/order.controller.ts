@@ -70,7 +70,7 @@ export const orderController = {
       if (!id) throw new Error('Id is required');
       const updatedOrder = await orderService.updateOne(id, rest);
       if (rest.status) {
-        await webSocketService.emitToRoom('message', String(updatedOrder.id), { type: 'order_status_change', payload: { status: rest.status } });
+        await webSocketService.emitToRoom('message', `order_${updatedOrder.id}`, { type: 'order_status_change', payload: { status: rest.status } });
       }
 
       res.json(updatedOrder);
@@ -102,7 +102,7 @@ export const orderController = {
         //     payload: { orderId },
         // });
 
-        webSocketService.emitToRoom('message', id, { type: 'order_status_change', payload: { status: 'in_progress' } });
+        webSocketService.emitToRoom('message', `order_${id}`, { type: 'order_status_change', payload: { status: 'in_progress' } });
 
         res.json({ message: 'Order assigned successfully' });
     } else {
