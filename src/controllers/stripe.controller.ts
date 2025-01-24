@@ -121,12 +121,8 @@ export const stripeController = {
         case 'account.updated': {
           const account = event.data.object;
           const { id, requirements, future_requirements } = account;
-
-          console.log({ id });
           
           const adminFound = await adminService.getAdminByStripeId(id);
-
-          console.log({ adminFound });
 
           if (requirements?.disabled_reason || future_requirements?.disabled_reason) {
             if (adminFound) {
