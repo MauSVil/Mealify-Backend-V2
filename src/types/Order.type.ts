@@ -15,8 +15,8 @@ export const orderSchema = z.object({
   plaform_fee_amount: z.coerce.number().nonnegative('La tarifa de la plataforma debe ser positiva'),
   latitude: z.number(),
   longitude: z.number(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
 });
 
 export type Order = z.infer<typeof orderSchema>;

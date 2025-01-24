@@ -3,6 +3,12 @@ import { Order } from "../types/Order.type";
 import { prisma } from "../prisma";
 
 export const OrderRepository = {
+  find: async <T extends Prisma.ordersInclude>(where: Prisma.ordersWhereInput, includeRelations: T) => {
+    return await prisma.orders.findMany({
+      where,
+      include: includeRelations,
+    }) as Prisma.ordersGetPayload<{ include: T }>[];
+  },
   findAll: async (user_id: number, includeRelations: Prisma.ordersInclude) => {
     return await prisma.orders.findMany({
       where: {
@@ -40,7 +46,7 @@ export const OrderRepository = {
       },
     });
   },
-  createOne: async (data: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>) => {
+  createOne: async (data: Omit<Order, 'id' | 'created_at' | 'updated_at'>) => {
     return await prisma.orders.create({
       data: {
         ...data,

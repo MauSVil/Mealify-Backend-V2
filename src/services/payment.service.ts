@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import XLSX from 'xlsx';
 import { userService } from './user.service';
 import moment from 'moment';
-import { prisma } from '../prisma';
+import { OrderRepository } from '../repositories/Order.repository';
 
 dotenv.config();
 
@@ -105,11 +105,29 @@ export const paymentService = {
   generatePaymentReport: async ({ startDate, endDate }: { startDate: string, endDate: string }) => {
     if (!startDate || !endDate) throw new Error('Invalid date range');
 
-    const start = moment(startDate, 'DD/MM/YYYY').startOf('day').toISOString();
-    const end = moment(endDate, 'DD/MM/YYYY').endOf('day').toISOString();
+    const start = moment(startDate, 'DD/MM/YYYY').startOf('day').toDate();
+    const end = moment(endDate, 'DD/MM/YYYY').endOf('day').toDate();
+
+    const orders = await OrderRepository.find({ created_at: { gte: start, lte: end } }, { restaurants: { include: { admins: true } }, delivery_drivers: true });
+
+    const parsedOrders = orders.map((order) => {
+      return {
+        'Fecha de creación': moment(order.created_at).format('DD/MM/YYYY HH:mm:ss'),
+        'Fecha de actualización': moment(order.updated_at).format('DD/MM/YYYY HH:mm:ss'),
+        'ID de la orden': order.id,
+        'Administrador': order.restaurants.admins?.stripe_account,
+        'Monto a pagar al restaurante': Number(order.amount),
+        'Repartidor': order.delivery_drivers?.name,
+        'Costo de envío': Number(order.delivery_fee),
+        'Propina repartidor': Number(order.delivery_ptg_amount),
+        'Monto a pagar al repartidor': Number(order.delivery_fee) + Number(order.delivery_ptg_amount),
+        'Monto total': Number(order.total_price),
+      };
+    });
 
     const workBook = XLSX.utils.book_new();
-    const workSheet = XLSX.utils.json_to_sheet([]);
+    const workSheet = XLSX.utils.json_to_sheet(parsedOrders);
+
     XLSX.utils.book_append_sheet(workBook, workSheet, 'Reporte de pagos');
     const date = new Date();
     const fileName = `Reporte de pagos ${date.toISOString()}.xlsx`;

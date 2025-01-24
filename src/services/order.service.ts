@@ -3,6 +3,9 @@ import { OrderRepository } from "../repositories/Order.repository"
 import { Order } from "../types/Order.type";
 
 export const orderService = {
+  find: async (where: Prisma.ordersWhereInput, includeRelations: Prisma.ordersInclude) => {
+    return await OrderRepository.find(where, includeRelations);
+  },
   findAll: async (user_id: number) => {
     return await OrderRepository.findAll(user_id, { restaurants: true, order_items: true });
   },
