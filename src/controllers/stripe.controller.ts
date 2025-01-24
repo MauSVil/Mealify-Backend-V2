@@ -91,26 +91,16 @@ export const stripeController = {
 
           if (requirements?.disabled_reason || future_requirements?.disabled_reason) {
             await adminService.updateAdmin(adminFound.id!, { stripe_status: 'error' });
+            await webSocketService.emitToRoom('stripe-status', `admin_${adminFound.id!.toString()}`, { type: 'stripe-status', status: 'error' });
             break;
           } else {
             await adminService.updateAdmin(adminFound.id!, { stripe_status: 'success' });
+            await webSocketService.emitToRoom('stripe-status', `admin_${adminFound.id!.toString()}`, { type: 'stripe-status', status: 'success' });
           }
-
           break;
         }
         default:
           console.log(`Unhandled event type ${event.type}`);
-        // case 'charge.updated': {
-        //   const charge = event.data.object;
-        //   // const orderFound = await orderService.findByPaymentIntentId(charge.payment_intent?.toString()!);
-        //   // if (!orderFound) throw new Error('Order not found');
-        //   // const balanceTransaction = await stripe.balanceTransactions.retrieve(charge.balance_transaction?.toString()!);
-        //   // console.log({ balanceTransaction });
-        //   if (charge.status === 'succeeded') {
-        //     console.log('Charge was successful!');
-        //   }
-        //   break;
-        // }
       }
       res.status(200).send();
     }
