@@ -16,6 +16,7 @@ import deliveryDriverRoutes from './routes/deliveryDriver.route';
 import { createServer } from "http";
 import webSocketService from "./services/webSocket.service";
 import { redisService } from "./services/redis.service";
+import { discordService } from "./services/discord.service";
 
 const app = express();
 const server = createServer(app);
@@ -55,6 +56,10 @@ app.use('/delivery-drivers', deliveryDriverRoutes);
 webSocketService.initialize(server);
 
 server.listen(PORT, async () => {
-  redisService.connect();
+  await redisService.connect();
+  await discordService.init(process.env.DISCORD_BOT_TOKEN!);
+
+  discordService.addChannel('general', process.env.GENERAL_CHANNEL!);
+
   console.log(`Server is running on port ${PORT}`);
 });

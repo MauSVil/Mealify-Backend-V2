@@ -1,5 +1,7 @@
+import { discordService } from "./services/discord.service";
 import { orderService } from "./services/order.service";
 import { redisService } from "./services/redis.service";
+import webSocketService from "./services/webSocket.service";
 
 (async () => {
   try {
@@ -15,6 +17,9 @@ import { redisService } from "./services/redis.service";
       console.log(`Procesando orden expirada: ${orderId}`);
 
       await orderService.updateOne(Number(orderId), { status: "restaurant_delayed" });
+      await webSocketService.emitToRoom('message', `order_${orderId}`, { type: 'order_status_change', payload: { status: 'restaurant_delayed' } });
+
+      await discordService.sendMessage('general', `La orden #${orderId} ha sido marcada como retrasada por el restaurante.`);
 
       await redisService.zrem("delayedOrders", orderId);
     }

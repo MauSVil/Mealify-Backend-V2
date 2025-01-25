@@ -40,7 +40,7 @@ export const stripeController = {
 
           const order = await orderService.createOne({
             payment_intent_id: paymentIntent.id,
-            status: 'preparing',
+            status: 'pending',
             payment_status: 'completed',
             user_id: Number(user_id),
             restaurant_id: Number(restaurant),
