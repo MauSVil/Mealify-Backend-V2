@@ -17,6 +17,7 @@ export const orderSchema = z.object({
   longitude: z.number(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
+  delay_date: z.date().optional(),
 });
 
 export type Order = z.infer<typeof orderSchema>;
