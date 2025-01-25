@@ -12,7 +12,6 @@ model admins {
   name                String?       @db.VarChar(100)
   email               String        @unique @db.VarChar(150)
   clerk_user_id       String        @unique @db.VarChar(255)
-  customer_id         String?       @unique @db.VarChar(255)
   created_at          DateTime?     @default(now()) @db.Timestamp(6)
   updated_at          DateTime?     @default(now()) @db.Timestamp(6)
   stripe_account      String?       @unique @db.VarChar(255)
@@ -21,6 +20,7 @@ model admins {
   phone               String?       @db.VarChar(10)
   onboarding_finished Boolean?      @default(false)
   stripe_status       StripeStatus  @default(error)
+  customer_id         String?       @unique @db.VarChar(255)
   restaurants         restaurants[]
 }
 
@@ -136,13 +136,13 @@ model orders {
 
 enum OrderStatus {
   pending
-  restaurant_delayed
-  preparing
-  ready_for_pickup
   in_progress
-  rider_delayed
   delivered
   cancelled
+  preparing
+  ready_for_pickup
+  restaurant_delayed
+  rider_delayed
 }
 
 enum PaymentStatus {
