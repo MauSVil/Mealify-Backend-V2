@@ -9,7 +9,7 @@ import webSocketService from "./services/webSocket.service";
 
     await redisService.connect();
     await discordService.init(process.env.DISCORD_BOT_TOKEN!);
-    await discordService.addChannel('general', process.env.GENERAL_CHANNEL!);
+    await discordService.addChannel('general', '1332644717644615732');
     const currentTime = Math.floor(Date.now() / 1000);
 
     const expiredOrders = await redisService.zrangebyscore('delayedOrders', 0, currentTime);
@@ -31,6 +31,5 @@ import webSocketService from "./services/webSocket.service";
     console.error("Error durante el procesamiento de órdenes vencidas:", err);
   } finally {
     await redisService.client?.quit();
-    await discordService.client?.destroy();
   }
 })();
