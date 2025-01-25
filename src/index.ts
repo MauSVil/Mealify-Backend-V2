@@ -16,7 +16,6 @@ import deliveryDriverRoutes from './routes/deliveryDriver.route';
 import { createServer } from "http";
 import webSocketService from "./services/webSocket.service";
 import { redisService } from "./services/redis.service";
-import { startCronJobs } from "./job-processor";
 
 const app = express();
 const server = createServer(app);
@@ -57,6 +56,5 @@ webSocketService.initialize(server);
 
 server.listen(PORT, async () => {
   redisService.connect();
-  await startCronJobs();
   console.log(`Server is running on port ${PORT}`);
 });
