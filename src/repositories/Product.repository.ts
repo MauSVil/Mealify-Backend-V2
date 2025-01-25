@@ -15,6 +15,7 @@ export const ProductRepository = {
     return await prisma.products.findMany({
       where: {
         restaurant_id: restaurantId,
+        is_available: true,
       },
     });
   },
