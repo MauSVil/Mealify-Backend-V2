@@ -8,6 +8,7 @@ import { restaurantsService } from "../services/restaurant.service";
 import { stripeService } from "../services/stripe.service";
 import { RequestWithAuth } from "../types/Global.type";
 import { adminService } from "../services/admin.service";
+import { redisService } from "../services/redis.service";
 
 dotenv.config();
 
@@ -58,6 +59,9 @@ export const stripeController = {
             plaform_fee_amount: Number(plaform_fee_amount),
           })
 
+          const expirationTime = Math.floor(Date.now() / 1000) + 300;
+          await redisService.zadd('delayedOrders', expirationTime, order.id!.toString());
+
           const cartItems = JSON.parse(cart);
           const mappedCartItems = Object.keys(cartItems).map((key) => {
             const item = cartItems[key];
@@ -80,23 +84,6 @@ export const stripeController = {
           const orderFound = await orderService.findByPaymentIntentId(paymentIntent.id);
           if (!orderFound) throw new Error('Order not found');
           await orderService.updateOne(orderFound.id, { status: 'cancelled', payment_status: 'rejected' });
-          break;
-        }
-        case 'account.updated': {
-          const account = event.data.object;
-          const { id, requirements, future_requirements } = account;
-
-          const adminFound = await adminService.getAdminByStripeId(id);
-          if (!adminFound) throw new Error('Admin not found');
-
-          if (requirements?.disabled_reason || future_requirements?.disabled_reason) {
-            await adminService.updateAdmin(adminFound.id!, { stripe_status: 'error' });
-            await webSocketService.emitToRoom('stripe-status', `admin_${adminFound.id!.toString()}`, { type: 'stripe-status', status: 'error' });
-            break;
-          } else {
-            await adminService.updateAdmin(adminFound.id!, { stripe_status: 'success' });
-            await webSocketService.emitToRoom('stripe-status', `admin_${adminFound.id!.toString()}`, { type: 'stripe-status', status: 'success' });
-          }
           break;
         }
         default:

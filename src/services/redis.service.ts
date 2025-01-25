@@ -1,25 +1,88 @@
-import Redis from 'ioredis';
+import { createClient, RedisClientType } from "redis";
 
-let redisInstance: Redis | null = null;
+export const redisService = {
+  client: null as RedisClientType | null,
 
-const getRedisInstance = (): Redis => {
-    if (!redisInstance) {
-        redisInstance = new Redis({
-            host: process.env.REDIS_HOST || 'localhost',
-            port: Number(process.env.REDIS_PORT) || 6379,
-            password: process.env.REDIS_PASSWORD || undefined,
-        });
+  async connect() {
+    if (!this.client) {
+      this.client = createClient({
+        url: `redis://${process.env.REDIS_HOST || "localhost"}:${
+          process.env.REDIS_PORT || 6379
+        }`,
+        password: process.env.REDIS_PASSWORD || undefined,
+      });
 
-        redisInstance.on('connect', () => {
-            console.log('Connected to Redis');
-        });
+      this.client.on("connect", () => {
+        console.log("Redis connected");
+      });
 
-        redisInstance.on('error', (err) => {
-            console.error('Redis error:', err);
-        });
+      this.client.on("error", (err) => {
+        console.error(`Redis error: ${err}`);
+      });
+
+      await this.client.connect();
     }
+  },
 
-    return redisInstance;
+  async set(key: string, value: string, options = {}) {
+    if (!this.client) throw new Error("Redis client is not connected");
+    try {
+      await this.client.set(key, value, options);
+      console.log(`Key ${key} set successfully`);
+    } catch (err) {
+      console.error(`Error setting key ${key}: ${err}`);
+    }
+  },
+
+  async get(key: string): Promise<string | null> {
+    if (!this.client) throw new Error("Redis client is not connected");
+    try {
+      const value = await this.client.get(key);
+      return value;
+    } catch (err) {
+      console.error(`Error getting key ${key}: ${err}`);
+      return null;
+    }
+  },
+
+  async del(key: string) {
+    if (!this.client) throw new Error("Redis client is not connected");
+    try {
+      await this.client.del(key);
+      console.log(`Key ${key} deleted successfully`);
+    } catch (err) {
+      console.error(`Error deleting key ${key}: ${err}`);
+    }
+  },
+
+  async quit() {
+    if (this.client) {
+      try {
+        await this.client.quit();
+        console.log("Redis connection closed");
+      } catch (err) {
+        console.error(`Error closing Redis connection: ${err}`);
+      } finally {
+        this.client = null; // Asegura que el cliente sea null después de cerrar
+      }
+    }
+  },
+
+  async zadd(key: string, score: number, member: string) {
+    if (this.client) {
+      await this.client.zAdd(key, { score, value: member });
+    }
+  },
+
+  async zrangebyscore(key: string, min: number, max: number) {
+    if (this.client) {
+      return await this.client.zRangeByScore(key, min, max);
+    }
+  },
+
+  async zrem(key: string, member: string) {
+    if (this.client) {
+      await this.client.zRem(key, member);
+    }
+  },
 };
-
-export default getRedisInstance;

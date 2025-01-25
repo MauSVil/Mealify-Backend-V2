@@ -3,7 +3,6 @@ import { orderService } from '../services/order.service';
 import { RequestWithAuth } from '../types/Global.type';
 import { userService } from '../services/user.service';
 import webSocketService from '../services/webSocket.service';
-import getRedisInstance from '../services/redis.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -84,30 +83,30 @@ export const orderController = {
   },
   acceptOrder: async (req: Request, res: Response) => {
     try {
-      const redis = getRedisInstance();
-      const { id, delivery_driver } = req.body;
-      if (!id || !delivery_driver) throw new Error('Id and Delivery Driver are required');
+      // const redis = getRedisInstance();
+      // const { id, delivery_driver } = req.body;
+      // if (!id || !delivery_driver) throw new Error('Id and Delivery Driver are required');
 
-      const lockKey = `order:${id}:lock`;
+      // const lockKey = `order:${id}:lock`;
 
-      // @ts-ignore
-      const lock = await redis.set(lockKey, delivery_driver, 'NX', 'EX', 30);
+      // // @ts-ignore
+      // const lock = await redis.set(lockKey, delivery_driver, 'NX', 'EX', 30);
 
-      if (lock) {
-        await orderService.updateOne(Number(id), { driver_id: Number(delivery_driver), status: 'in_progress' });
+      // if (lock) {
+        // await orderService.updateOne(Number(id), { driver_id: Number(delivery_driver), status: 'in_progress' });
 
-        // Notificar al repartidor que la orden es suya
-        // await webSocketService.emitToRoom('message', `driver_${driverId}`, {
-        //     type: 'order_assigned',
-        //     payload: { orderId },
-        // });
+        // // Notificar al repartidor que la orden es suya
+        // // await webSocketService.emitToRoom('message', `driver_${driverId}`, {
+        // //     type: 'order_assigned',
+        // //     payload: { orderId },
+        // // });
 
-        webSocketService.emitToRoom('message', `order_${id}`, { type: 'order_status_change', payload: { status: 'in_progress' } });
+        // webSocketService.emitToRoom('message', `order_${id}`, { type: 'order_status_change', payload: { status: 'in_progress' } });
 
         res.json({ message: 'Order assigned successfully' });
-    } else {
-        res.status(409).json({ message: 'Order already assigned' });
-    }
+    // } else {
+    //     res.status(409).json({ message: 'Order already assigned' });
+    // }
       // await orderService.acceptOrder(id, delivery_driver);
       // await webSocketService.emitToRoom('message', String(updatedOrder.id), { type: 'order_status_change', payload: { status: updatedOrder.status } });
     } catch (error) {
