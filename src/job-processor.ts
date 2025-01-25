@@ -31,5 +31,6 @@ import webSocketService from "./services/webSocket.service";
     console.error("Error durante el procesamiento de órdenes vencidas:", err);
   } finally {
     await redisService.client?.quit();
+    process.exit(0);
   }
 })();
