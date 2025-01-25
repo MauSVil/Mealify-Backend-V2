@@ -5,32 +5,31 @@ import webSocketService from "./services/webSocket.service";
 
 (async () => {
   try {
-    console.log("Iniciando procesamiento de órdenes vencidas...");
-
     await redisService.connect();
+
     await discordService.init(process.env.DISCORD_BOT_TOKEN!);
-    await discordService.addChannel('general', '1332644717644615732');
+
+    await discordService.addChannel('general', process.env.GENERAL_CHANNEL!);
+
     const currentTime = Math.floor(Date.now() / 1000);
 
     const expiredOrders = await redisService.zrangebyscore('delayedOrders', 0, currentTime);
-    if (!expiredOrders) throw new Error("No se encontraron órdenes vencidas.");
+    if (!expiredOrders || expiredOrders.length === 0) {
+      console.log("No se encontraron órdenes vencidas.");
+      process.exit(0);
+    }
 
     for (const orderId of expiredOrders) {
-      console.log(`Procesando orden expirada: ${orderId}`);
-
       await orderService.updateOne(Number(orderId), { status: "restaurant_delayed" });
       await webSocketService.emitToRoom('message', `order_${orderId}`, { type: 'order_status_change', payload: { status: 'restaurant_delayed' } });
-
       await discordService.sendMessage('general', `La orden #${orderId} ha sido marcada como retrasada por el restaurante.`);
-
       await redisService.zrem("delayedOrders", orderId);
     }
 
-    console.log("Procesamiento de órdenes vencidas completado.");
+    await redisService.client?.quit();
   } catch (err) {
     console.error("Error durante el procesamiento de órdenes vencidas:", err);
-  } finally {
-    await redisService.client?.quit();
-    process.exit(0);
   }
+  console.log("Saliendo del proceso...");
+  process.exit(0);
 })();
