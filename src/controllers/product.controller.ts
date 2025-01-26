@@ -6,7 +6,7 @@ export const productsController = {
   getAllProducts: async (req: Request, res: Response) => {
     try {
       const businessId = req.headers['x-business-id'] as string;
-      const products = await productService.getAllProducts({ where: { restaurant_id: parseInt(businessId), is_available: true } });
+      const products = await productService.getAllProducts({ where: { restaurant_id: parseInt(businessId) } });
       res.status(200).json(products);
     } catch (error) {
       if (error instanceof Error) {
@@ -34,7 +34,7 @@ export const productsController = {
     try {
       const { id } = req.params;
       if (!id) throw new Error('Missing restaurant id');
-      const products = await productService.getAllProducts({ where: { restaurant_id: parseInt(id) } });
+      const products = await productService.getAllProducts({ where: { restaurant_id: parseInt(id), is_available: true } });
       res.status(200).json(products);
     } catch (error) {
       if (error instanceof Error) {
