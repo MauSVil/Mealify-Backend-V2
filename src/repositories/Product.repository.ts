@@ -1,22 +1,17 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../prisma";
 import { Product } from "../types/Product.type";
 
 
 export const ProductRepository = {
-  findAll: async () => {
-    return await prisma.products.findMany();
+  findAll: async ({ where }: { where?: Prisma.productsWhereInput }) => {
+    return await prisma.products.findMany({
+      where,
+    });
   },
   findById: async (id: number) => {
     return await prisma.products.findUnique({
       where: { id },
-    });
-  },
-  findByRestaurantId: async (restaurantId: number) => {
-    return await prisma.products.findMany({
-      where: {
-        restaurant_id: restaurantId,
-        is_available: true,
-      },
     });
   },
   createOne: async (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {

@@ -1,19 +1,16 @@
+import { Prisma } from "@prisma/client";
 import { ProductRepository } from "../repositories/Product.repository";
 import { Product } from "../types/Product.type";
 import { fileService } from "./file.service";
 
 export const productService = {
-  getAllProducts: async () => {
-    const products = await ProductRepository.findAll();
+  getAllProducts: async ({ where }: { where?: Prisma.productsWhereInput }) => {
+    const products = await ProductRepository.findAll({ where });
     return products;
   },
   getProductById: async (id: number) => {
     const product = await ProductRepository.findById(id);
     return product;
-  },
-  getProductsByRestaurantId: async (restaurantId: number) => {
-    const products = await ProductRepository.findByRestaurantId(restaurantId);
-    return products;
   },
   addProduct: async (product: Product, file: Express.Multer.File) => {
     const productCreated = await ProductRepository.createOne(product);
