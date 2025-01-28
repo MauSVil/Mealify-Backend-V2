@@ -1,4 +1,4 @@
-import { discordService } from "./services/discord.service";
+// import { discordService } from "./services/discord.service";
 import { orderService } from "./services/order.service";
 import { redisService } from "./services/redis.service";
 import webSocketService from "./services/webSocket.service";
@@ -7,9 +7,9 @@ import webSocketService from "./services/webSocket.service";
   try {
     await redisService.connect();
 
-    await discordService.init(process.env.DISCORD_BOT_TOKEN!);
+    // await discordService.init(process.env.DISCORD_BOT_TOKEN!);
 
-    await discordService.addChannel('general', process.env.GENERAL_CHANNEL!);
+    // await discordService.addChannel('general', process.env.GENERAL_CHANNEL!);
 
     const currentTime = Math.floor(Date.now() / 1000);
 
@@ -24,7 +24,7 @@ import webSocketService from "./services/webSocket.service";
       console.log(`Procesando orden vencida #${orderId}`);
       await orderService.updateOne(Number(orderId), { status: "restaurant_delayed", delay_date: new Date() });
       await webSocketService.emitToRoom('message', `order_${orderId}`, { type: 'order_status_change', payload: { status: 'restaurant_delayed' } });
-      await discordService.sendMessage('general', `La orden #${orderId} ha sido marcada como retrasada por el restaurante.`);
+      // await discordService.sendMessage('general', `La orden #${orderId} ha sido marcada como retrasada por el restaurante.`);
       await redisService.zrem("delayedOrders", orderId);
     }
 

@@ -57,9 +57,9 @@ webSocketService.initialize(server);
 
 server.listen(PORT, async () => {
   await redisService.connect();
-  await discordService.init(process.env.DISCORD_BOT_TOKEN!);
+  // await discordService.init(process.env.DISCORD_BOT_TOKEN!);
 
-  discordService.addChannel('general', process.env.GENERAL_CHANNEL!);
+  // discordService.addChannel('general', process.env.GENERAL_CHANNEL!);
 
   console.log(`Server is running on port ${PORT}`);
 });
