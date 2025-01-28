@@ -60,6 +60,7 @@ export const OrderRepository = {
       },
       data: {
         ...data,
+        updated_at: new Date(),
       },
     });
   },
