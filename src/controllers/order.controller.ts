@@ -3,6 +3,7 @@ import { orderService } from '../services/order.service';
 import { RequestWithAuth } from '../types/Global.type';
 import { userService } from '../services/user.service';
 import webSocketService from '../services/webSocket.service';
+import { redisService } from '../services/redis.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -70,6 +71,9 @@ export const orderController = {
       const updatedOrder = await orderService.updateOne(id, rest);
       if (rest.status) {
         await webSocketService.emitToRoom('message', `order_${updatedOrder.id}`, { type: 'order_status_change', payload: { status: rest.status } });
+        if (rest.status === 'preparing') {
+          await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
+        }
       }
 
       res.json(updatedOrder);
