@@ -83,7 +83,7 @@ export const stripeController = {
           const paymentIntent = event.data.object;
           const orderFound = await orderService.findByPaymentIntentId(paymentIntent.id);
           if (!orderFound) throw new Error('Order not found');
-          await orderService.updateOne(orderFound.id, { status: 'cancelled', payment_status: 'rejected' });
+          await orderService.updateOne(orderFound.id, { status: 'cancelled_by_user', payment_status: 'rejected' });
           break;
         }
         default:
