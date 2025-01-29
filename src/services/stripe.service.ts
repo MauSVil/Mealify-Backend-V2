@@ -90,4 +90,11 @@ export const stripeService = {
     }
     return customer;
   },
+  refundPayment: async ({ paymentIntentId, amount }: { paymentIntentId: string, amount?: number }) => {
+    const refund = await stripe.refunds.create({
+      payment_intent: paymentIntentId,
+      ...(amount && { amount }),
+    });
+    return refund;
+  },
 };

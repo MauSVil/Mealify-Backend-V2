@@ -4,6 +4,7 @@ import { RequestWithAuth } from '../types/Global.type';
 import { userService } from '../services/user.service';
 import webSocketService from '../services/webSocket.service';
 import { redisService } from '../services/redis.service';
+import { stripeService } from '../services/stripe.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -71,8 +72,15 @@ export const orderController = {
       const updatedOrder = await orderService.updateOne(id, rest);
       if (rest.status) {
         await webSocketService.emitToRoom('message', `order_${updatedOrder.id}`, { type: 'order_status_change', payload: { status: rest.status } });
-        if (rest.status === 'preparing') {
-          await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
+        switch (rest.status) {
+          case 'preparing':
+            await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
+            break;
+          case 'cancelled_by_restaurant':
+            await stripeService.refundPayment({ paymentIntentId: updatedOrder.payment_intent_id });
+            break;
+          default:
+            break;
         }
       }
 
