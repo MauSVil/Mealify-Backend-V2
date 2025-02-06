@@ -49,6 +49,7 @@ model products {
   is_available  Boolean       @default(true)
   created_at    DateTime?     @default(now()) @db.Timestamp(6)
   updated_at    DateTime?     @default(now()) @db.Timestamp(6)
+  deleted_at    DateTime?     @db.Timestamp(6)
   image_max     String?       @db.VarChar(255)
   image_med     String?       @db.VarChar(255)
   image_min     String?       @db.VarChar(255)

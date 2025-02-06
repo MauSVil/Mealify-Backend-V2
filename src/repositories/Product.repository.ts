@@ -6,12 +6,15 @@ import { Product } from "../types/Product.type";
 export const ProductRepository = {
   findAll: async ({ where }: { where?: Prisma.productsWhereInput }) => {
     return await prisma.products.findMany({
-      where,
+      where: {
+        ...where,
+        deleted_at: null,
+      },
     });
   },
   findById: async (id: number) => {
     return await prisma.products.findUnique({
-      where: { id },
+      where: { id, deleted_at: null },
     });
   },
   createOne: async (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -28,10 +31,13 @@ export const ProductRepository = {
     });
   },
   deleteById: async (id: number) => {
-    await prisma.products.delete({
+    await prisma.products.update({
       where: {
-        id: id,
+        id,
       },
+      data: {
+        deleted_at: new Date(),
+      }
     });
   },
 };

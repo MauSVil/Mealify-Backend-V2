@@ -41,4 +41,7 @@ export const productService = {
       await ProductRepository.updateOne(Number(id!), rest);
     });
   },
+  deleteProduct: async (id: number) => {
+    await ProductRepository.deleteById(id);
+  },
 }

@@ -82,4 +82,18 @@ export const productsController = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
+  deleteProduct: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      if (!id) throw new Error('Missing product id');
+      await productService.deleteProduct(parseInt(id));
+      res.status(204).send();
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 };
