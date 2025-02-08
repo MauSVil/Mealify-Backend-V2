@@ -12,6 +12,7 @@ router.get('/:id', productsController.getProductById);
 router.get('/', productsController.getAllProducts);
 router.post('/', upload.single('image'), productsController.addProduct);
 router.put('/', productsController.updateProducts);
+router.put('/:id', upload.single('image'), productsController.updateProduct);
 router.delete('/:id', productsController.deleteProduct);
 
 export default router;

@@ -35,6 +35,33 @@ export const productService = {
       }
     );
   },
+  updateProduct: async (id: number, product: Partial<Product>, file: Express.Multer.File) => {
+    const productUpdated = await ProductRepository.updateOne(id, product);
+
+    if (file) {
+      const sizes = [200, 400, 800];
+      const extension = 'webp';
+      const compressedFiles = await fileService.compressImage(file.buffer, extension, sizes);
+      const urls = await Promise.all(compressedFiles.map(async (compessedFile, idx) => {
+        return await fileService.uploadImage('products', `${productUpdated.id}/image-${sizes[idx]}.${extension}`, compessedFile);
+      }));
+
+      const { id, price, restaurant_id, ...rest } = productUpdated;
+
+      return await ProductRepository.updateOne(
+        productUpdated.id,
+        {
+          ...rest,
+          image_min: urls[0],
+          image_med: urls[1],
+          image_max: urls[2],
+          price: price.toNumber(),
+        }
+      );
+    }
+
+    return productUpdated;
+  },
   updateProducts: async (products: Partial<Product>[]) => {
     products.forEach(async (product) => {
       const { id, ...rest } = product;

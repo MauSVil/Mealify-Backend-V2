@@ -69,9 +69,41 @@ export const productsController = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
+  updateProduct: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const file = req.file;
+
+      if (!file) throw new Error('Missing image file');
+
+      const productFound = await productService.getProductById(Number(id));
+
+      if (!productFound) throw new Error('Product not found');
+
+      const input = {
+        ...productFound,
+        ...body,
+      }
+
+      if (body.price) {
+        input.price = Number(body.price);
+      }
+
+      const updatedProduct = await productService.updateProduct(Number(id), input, file);
+      res.status(200).json(updatedProduct);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
   updateProducts: async (req: Request, res: Response) => {
     try {
       const body = req.body;
+
       const updates = await productService.updateProducts(body);
       res.status(200).json(updates);
     } catch (error) {
