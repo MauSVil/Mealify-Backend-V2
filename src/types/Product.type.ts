@@ -1,14 +1,5 @@
 import { z } from 'zod';
 
-export const groupOptions = [
-  { label: "Comidas", value: "meals" },
-  { label: "Desayunos", value: "breakfasts" },
-  { label: "Cenas", value: "dinners" },
-  { label: "Postres", value: "desserts" },
-  { label: "Bebidas", value: "drinks" },
-  { label: "Otros", value: "others" },
-] as const;
-
 export const productSchema = z.object({
   id: z.number().optional(),
   restaurant_id: z.number().min(1, 'El ID del restaurante es obligatorio'),
@@ -19,7 +10,7 @@ export const productSchema = z.object({
   image_min: z.string().optional(),
   image_med: z.string().optional(),
   image_max: z.string().optional(),
-  group: z.enum(groupOptions.map((group) => group.value) as [string, ...string[]]),
+  group: z.enum(["meals", "breakfasts", "dinners", "desserts", "drinks", "others"]),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
