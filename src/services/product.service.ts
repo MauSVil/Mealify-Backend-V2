@@ -35,10 +35,10 @@ export const productService = {
       }
     );
   },
-  updateProduct: async (id: number, product: Partial<Product>, file: Express.Multer.File) => {
+  updateProduct: async (id: number, product: Partial<Product>, file?: Express.Multer.File) => {
     const productUpdated = await ProductRepository.updateOne(id, product);
 
-    if (file) {
+    if (file && file?.buffer) {
       const sizes = [200, 400, 800];
       const extension = 'webp';
       const compressedFiles = await fileService.compressImage(file.buffer, extension, sizes);

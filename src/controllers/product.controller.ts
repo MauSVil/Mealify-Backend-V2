@@ -75,8 +75,6 @@ export const productsController = {
       const body = req.body;
       const file = req.file;
 
-      if (!file) throw new Error('Missing image file');
-
       const productFound = await productService.getProductById(Number(id));
 
       if (!productFound) throw new Error('Product not found');
