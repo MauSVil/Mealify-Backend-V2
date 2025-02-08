@@ -84,6 +84,8 @@ export const productsController = {
         ...body,
       }
 
+      delete input.id;
+
       if (body.price) {
         input.price = Number(body.price);
       }
