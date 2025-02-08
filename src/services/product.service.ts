@@ -36,6 +36,8 @@ export const productService = {
     );
   },
   updateProduct: async (id: number, product: Partial<Product>, file?: Express.Multer.File) => {
+    delete product.id;
+    delete product.restaurant_id;
     const productUpdated = await ProductRepository.updateOne(id, product);
 
     if (file && file?.buffer) {

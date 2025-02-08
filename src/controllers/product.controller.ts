@@ -79,12 +79,12 @@ export const productsController = {
 
       if (!productFound) throw new Error('Product not found');
 
+      const { image, ...rest } = body;
+
       const input = {
         ...productFound,
-        ...body,
+        ...rest,
       }
-
-      delete input.id;
 
       if (body.price) {
         input.price = Number(body.price);
