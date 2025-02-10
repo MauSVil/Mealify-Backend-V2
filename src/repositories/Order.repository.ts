@@ -3,7 +3,7 @@ import { Order } from "../types/Order.type";
 import { prisma } from "../prisma";
 
 export const OrderRepository = {
-  find: async <T extends Prisma.ordersInclude>(where: Prisma.ordersWhereInput, includeRelations: T) => {
+  find: async <T extends Prisma.ordersInclude>(where: Prisma.ordersWhereInput, includeRelations?: T) => {
     return await prisma.orders.findMany({
       where,
       include: includeRelations,

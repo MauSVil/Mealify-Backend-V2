@@ -3,7 +3,7 @@ import { OrderRepository } from "../repositories/Order.repository"
 import { Order } from "../types/Order.type";
 
 export const orderService = {
-  find: async (where: Prisma.ordersWhereInput, includeRelations: Prisma.ordersInclude) => {
+  find: async (where: Prisma.ordersWhereInput, includeRelations?: Prisma.ordersInclude) => {
     return await OrderRepository.find(where, includeRelations);
   },
   findAll: async (user_id: number) => {
