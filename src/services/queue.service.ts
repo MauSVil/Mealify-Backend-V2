@@ -1,4 +1,4 @@
-import { Queue, Worker, Job } from 'bullmq';
+import { Queue, Worker, Job, QueueEvents } from 'bullmq';
 import Redis from 'ioredis';
 import { deliveryDriverService } from './deliveryDriver.service';
 import { orderService } from './order.service';
@@ -15,7 +15,16 @@ const redisConnection = new Redis({
   password: process.env.REDIS_PASSWORD! || undefined,
 });
 
-export const orderQueue = new Queue('orderQueue', { connection: redisConnection });
+export const orderQueue = new Queue('orderQueue', {
+  connection: redisConnection,
+  defaultJobOptions: {
+    attempts: 5,
+    backoff: {
+      type: 'exponential',
+      delay: 10000,
+    },
+  },
+});
 
 export const orderWorker = new Worker(
   'orderQueue',
@@ -29,6 +38,10 @@ export const orderWorker = new Worker(
           { longitude: order.longitude, latitude: order.latitude },
           { longitude: order.restaurants.longitude, latitude: order.restaurants.latitude }
         );
+
+        if (!deliveryDrivers.length) {
+          throw new Error(`No delivery drivers found for order ${orderId}`);
+        }
         
         for (const driver of deliveryDrivers) {
           const orderlock = await redisService.get(`order_locked:${orderId}`);
@@ -48,5 +61,13 @@ export const orderWorker = new Worker(
       throw error;
     }
   },
-  { connection: redisConnection }
+  {
+    connection: redisConnection,
+  }
 );
+
+const orderQueueEvents = new QueueEvents('orderQueue', { connection: redisConnection });
+
+orderQueueEvents.on('failed', async ({ jobId, failedReason }) => {
+  console.error(`🚨 Job ${jobId} ha fallado definitivamente: ${failedReason}`);
+});
