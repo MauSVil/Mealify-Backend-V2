@@ -38,6 +38,9 @@ export const orderWorker = new Worker(
           await sleep(30000);
         }
       }
+      if (job.name === 'notifyDriverToDeliver') {
+        console.log('Notifying driver to deliver order', job.data);
+      }
     } catch (error) {
       if (error instanceof Error) {
         console.error(`Error processing job ${job.id}: ${error.message}`);

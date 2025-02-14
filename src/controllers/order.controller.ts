@@ -116,18 +116,21 @@ export const orderController = {
       const orderCountKey = `driver_orders:${delivery_driver}`;
       const timeWindowKey = `driver_window_expired:${delivery_driver}`;
     
-      const lockAcquired = await redisService.set(orderLockKey, delivery_driver, { NX: true, EX: 60 });
+      const lockAcquired = await redisService.set(orderLockKey, delivery_driver, { NX: true, EX: 600 });
     
       if (lockAcquired !== "OK") {
         throw new Error('Order already accepted by another driver');
       }
-
-      await redisService.persist(orderLockKey);
     
       const currentOrders = await redisService.incr(orderCountKey);
     
       if (currentOrders === 1) {
         await redisService.set(timeWindowKey, '1', { EX: 180 }); // 3 minutes
+        await orderQueue.add(
+          'notifyDriverToDeliver',
+          { driverId: delivery_driver },
+          { delay: 3 * 60 * 1000 }
+        );
       }
 
       const timeWindow = await redisService.get(timeWindowKey);
