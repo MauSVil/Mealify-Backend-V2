@@ -39,17 +39,22 @@ export const orderWorker = new Worker(
           { longitude: order.restaurants.longitude, latitude: order.restaurants.latitude }
         );
 
-        if (!deliveryDrivers.length) {
-          throw new Error(`No delivery drivers found for order ${orderId}`);
-        }
+        if (!deliveryDrivers.length) throw new Error(`No delivery drivers found for order ${orderId}`);
+
+        let someOneAccepted = false;
         
         for (const driver of deliveryDrivers) {
           const orderlock = await redisService.get(`order_locked:${orderId}`);
-          if (orderlock) break;
+          if (orderlock) {
+            someOneAccepted = true;
+            break;
+          }
 
           console.log('Asking driver', driver.id, 'to take order', orderId);
           await sleep(30000);
         }
+
+        if (!someOneAccepted) throw new Error('No driver accepted the order');
       }
       if (job.name === 'notifyDriverToDeliver') {
         console.log('Notifying driver to deliver order', job.data);
