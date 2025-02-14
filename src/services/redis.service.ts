@@ -27,8 +27,8 @@ export const redisService = {
   async set(key: string, value: string, options = {}) {
     if (!this.client) throw new Error("Redis client is not connected");
     try {
-      await this.client.set(key, value, options);
       console.log(`Key ${key} set successfully`);
+      return await this.client.set(key, value, options);
     } catch (err) {
       console.error(`Error setting key ${key}: ${err}`);
     }
@@ -83,6 +83,30 @@ export const redisService = {
   async zrem(key: string, member: string) {
     if (this.client) {
       await this.client.zRem(key, member);
+    }
+  },
+
+  async incr(key: string) {
+    if (this.client) {
+      return await this.client.incr(key);
+    }
+  },
+
+  async decr(key: string) {
+    if (this.client) {
+      return await this.client.decr(key);
+    }
+  },
+
+  async keys(pattern: string) {
+    if (this.client) {
+      return await this.client.keys(pattern);
+    }
+  },
+
+  async persist(key: string) {
+    if (this.client) {
+      await this.client.persist(key);
     }
   },
 };

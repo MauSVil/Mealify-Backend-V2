@@ -1,10 +1,14 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '../prisma';
 import { DeliveryDriver } from '../types/DeliveryDriver.type';
 
 
 export const DeliveryDriverRepository = {
-  findAll: async (): Promise<DeliveryDriver[]> => {
-    return await prisma.delivery_drivers.findMany();
+  findAll: async <T extends Prisma.delivery_driversInclude>({ where, includeRelations }: { where?: Prisma.delivery_driversWhereInput, includeRelations?: T }) => {
+    return await prisma.delivery_drivers.findMany({
+      where,
+      include: includeRelations,
+    }) as Prisma.delivery_driversGetPayload<{ include: T }>[]
   },
   findById: async (id: number): Promise<DeliveryDriver | null> => {
     return await prisma.delivery_drivers.findUnique({

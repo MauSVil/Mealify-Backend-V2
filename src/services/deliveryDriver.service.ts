@@ -2,10 +2,12 @@ import { Decimal } from "@prisma/client/runtime/library";
 import { DeliveryDriverRepository } from "../repositories/DeliveryDriver.repository";
 import { DeliveryDriver } from "../types/DeliveryDriver.type";
 import { mapService } from "./map.service";
+import { redisService } from "./redis.service";
+import { orderService } from "./order.service";
 
 export const deliveryDriverService = {
   getAllDeliveryDrivers: async () => {
-    const deliveryDrivers = await DeliveryDriverRepository.findAll();
+    const deliveryDrivers = await DeliveryDriverRepository.findAll({});
     return deliveryDrivers;
   },
   getDeliveryDriverById: async (id: number) => {
@@ -20,17 +22,41 @@ export const deliveryDriverService = {
     const deliveryDriver = await DeliveryDriverRepository.deleteById(id);
     return deliveryDriver;
   },
-  findCandidates: async (restaurantLocation: { longitude: Decimal; latitude: Decimal }, userLocation: { longitude: Decimal; latitude: Decimal }) => {
+  findCandidates: async (
+    restaurantLocation: { longitude: Decimal; latitude: Decimal },
+    userLocation: { longitude: Decimal; latitude: Decimal }
+  ) => {
     const { longitude, latitude } = restaurantLocation;
     const { longitude: userLongitude, latitude: userLatitude } = userLocation;
-    const deliveryDrivers = await DeliveryDriverRepository.findAll();
+  
+    const deliveryDrivers = await DeliveryDriverRepository.findAll({
+      where: { is_active: true },
+      includeRelations: { orders: true },
+    });
 
-    const activeDrivers = deliveryDrivers.filter(driver => driver.is_active);
+    const eligibleDrivers: DeliveryDriver[] = [];
 
-    const candidates = activeDrivers.map(driver => {
-      const distanceToRestaurant = mapService.getDistance({ lat: latitude, lon: longitude }, { lat: driver.latitude!, lon: driver.longitude! });
-      const distanceToUser = mapService.getDistance({ lat: userLatitude, lon: userLongitude }, { lat: driver.latitude!, lon: driver.longitude! });
+    for (const driver of deliveryDrivers) {
+      const { id } = driver;
+      const orderCountKey = `driver_orders:${id}`;
+  
+      const orderCount = await redisService.get(orderCountKey);
 
+      if (Number(orderCount) >= 3) continue;
+
+      eligibleDrivers.push(driver);
+    }
+  
+    const candidates = eligibleDrivers.map(driver => {
+      const distanceToRestaurant = mapService.getDistance(
+        { lat: latitude, lon: longitude },
+        { lat: driver.latitude!, lon: driver.longitude! }
+      );
+      const distanceToUser = mapService.getDistance(
+        { lat: userLatitude, lon: userLongitude },
+        { lat: driver.latitude!, lon: driver.longitude! }
+      );
+  
       return {
         ...driver,
         distanceToRestaurant,
@@ -38,9 +64,9 @@ export const deliveryDriverService = {
         score: distanceToRestaurant * 0.7 + distanceToUser * 0.3,
       };
     });
-
+  
     candidates.sort((a, b) => a.score - b.score);
-
+  
     return candidates;
   }
 }

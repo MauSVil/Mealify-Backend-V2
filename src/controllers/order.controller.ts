@@ -5,6 +5,7 @@ import { userService } from '../services/user.service';
 import webSocketService from '../services/webSocket.service';
 import { redisService } from '../services/redis.service';
 import { stripeService } from '../services/stripe.service';
+import { orderQueue } from '../services/queue.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -79,6 +80,19 @@ export const orderController = {
           case 'cancelled_by_restaurant':
             await stripeService.refundPayment({ paymentIntentId: updatedOrder.payment_intent_id });
             break;
+          case 'ready_for_pickup':
+            await orderQueue.add('assignDelivery', { orderId: updatedOrder.id });
+            break;
+          case 'delivered':
+          case 'cancelled_by_delivery':
+          case 'cancelled_by_user':
+            await redisService.del(`order_locked:${id}`);
+            const currentOrders = await redisService.decr(`driver_orders:${updatedOrder.driver_id}`);
+            if (!currentOrders || currentOrders <= 0) {
+              await redisService.del(`driver_orders:${updatedOrder.driver_id}`);
+              await redisService.del(`driver_window_expired:${updatedOrder.driver_id}`);
+            }
+            break;
           default:
             break;
         }
@@ -95,32 +109,33 @@ export const orderController = {
   },
   acceptOrder: async (req: Request, res: Response) => {
     try {
-      // const redis = getRedisInstance();
-      // const { id, delivery_driver } = req.body;
-      // if (!id || !delivery_driver) throw new Error('Id and Delivery Driver are required');
+      const { id, delivery_driver } = req.body;
+      if (!id || !delivery_driver) throw new Error('Id and Delivery Driver are required');
 
-      // const lockKey = `order:${id}:lock`;
+      const orderLockKey = `order_locked:${id}`;
+      const orderCountKey = `driver_orders:${delivery_driver}`;
+      const timeWindowKey = `driver_window_expired:${delivery_driver}`;
+    
+      const lockAcquired = await redisService.set(orderLockKey, delivery_driver, { NX: true, EX: 60 });
+    
+      if (lockAcquired !== "OK") {
+        throw new Error('Order already accepted by another driver');
+      }
 
-      // // @ts-ignore
-      // const lock = await redis.set(lockKey, delivery_driver, 'NX', 'EX', 30);
+      await redisService.persist(orderLockKey);
+    
+      const currentOrders = await redisService.incr(orderCountKey);
+    
+      if (currentOrders === 1) {
+        await redisService.set(timeWindowKey, '1', { EX: 180 }); // 3 minutes
+      }
 
-      // if (lock) {
-        // await orderService.updateOne(Number(id), { driver_id: Number(delivery_driver), status: 'in_progress' });
+      const timeWindow = await redisService.get(timeWindowKey);
 
-        // // Notificar al repartidor que la orden es suya
-        // // await webSocketService.emitToRoom('message', `driver_${driverId}`, {
-        // //     type: 'order_assigned',
-        // //     payload: { orderId },
-        // // });
-
-        // webSocketService.emitToRoom('message', `order_${id}`, { type: 'order_status_change', payload: { status: 'in_progress' } });
-
-        res.json({ message: 'Order assigned successfully' });
-    // } else {
-    //     res.status(409).json({ message: 'Order already assigned' });
-    // }
-      // await orderService.acceptOrder(id, delivery_driver);
-      // await webSocketService.emitToRoom('message', String(updatedOrder.id), { type: 'order_status_change', payload: { status: updatedOrder.status } });
+      if (!timeWindow) throw new Error('Time window expired');
+    
+      await orderService.updateOne(id, { driver_id: Number(delivery_driver) });
+      res.json({ message: 'Order accepted successfully' });
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ message: error.message });
