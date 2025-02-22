@@ -77,9 +77,10 @@ export const restaurantsController = {
   },
   getCloseRestaurants: async (req: Request, res: Response) => {
     try {
-      const { latitude, longitude } = req.params;
+      const { latitude, longitude, query } = req.params;
       if (!latitude || !longitude) throw new Error('Missing latitude or longitude');
-      const closeRestaurants = await restaurantsService.getCloseRestaurants(parseFloat(latitude as string), parseFloat(longitude as string));
+
+      const closeRestaurants = await restaurantsService.getCloseRestaurants({ query, latitude: parseFloat(latitude as string), longitude: parseFloat(longitude as string)});
       res.status(200).json(closeRestaurants);
     } catch (error) {
       if (error instanceof Error) {

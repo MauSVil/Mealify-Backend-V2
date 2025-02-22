@@ -44,8 +44,8 @@ export const restaurantsService = {
       }
     );
   },
-  getCloseRestaurants: async (latitude: number, longitude: number) => {
-    const restaurants = await RestaurantRepository.findAll({ includeRelations: { admins: true } });
+  getCloseRestaurants: async ({ query, latitude, longitude}: { query: string; latitude: number; longitude: number }) => {
+    const restaurants = await RestaurantRepository.findAll({ where: { name: { contains: query }}, includeRelations: { admins: true } });
     return restaurants.filter(restaurant => {
       const distance = mapService.getDistance({ lat: latitude, lon: longitude }, { lat: restaurant.latitude.toNumber(), lon: restaurant.longitude.toNumber() });
       return distance < 5 && restaurant.admins?.stripe_status === 'success';

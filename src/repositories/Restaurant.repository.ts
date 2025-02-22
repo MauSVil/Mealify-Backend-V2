@@ -3,8 +3,11 @@ import { prisma } from "../prisma";
 import { Restaurant } from "../types/Restaurant.type";
 
 export const RestaurantRepository = {
-  findAll: async <T extends Prisma.restaurantsInclude>({ includeRelations }: { includeRelations?: T }) => {
-    return await prisma.restaurants.findMany({ include: includeRelations }) as Prisma.restaurantsGetPayload<{ include: T }>[]
+  findAll: async <T extends Prisma.restaurantsInclude>({ where, includeRelations }: { where?: Prisma.restaurantsWhereInput; includeRelations?: T }) => {
+    return await prisma.restaurants.findMany({
+      where,
+      include: includeRelations
+    }) as Prisma.restaurantsGetPayload<{ include: T }>[]
   },
   findByAdmin: async (adminId: number) => {
     return await prisma.restaurants.findMany({

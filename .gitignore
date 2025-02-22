@@ -29,3 +29,5 @@ Thumbs.db
 
 # Optional: If you're using Docker
 docker-compose.override.yml
+
+src/scripts/Seed/
