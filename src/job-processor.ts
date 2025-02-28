@@ -16,7 +16,11 @@ async function exitProcess(code: number) {
       await redisService.client.quit();
       console.log("Redis desconectado.");
     }
-    socket.close();
+
+    if (socket.connected) {
+      socket.disconnect();
+      console.log("Desconectado del servidor WebSocket.");
+    }
   } catch (error) {
     console.error("Error al cerrar conexiones:", error);
   } finally {
