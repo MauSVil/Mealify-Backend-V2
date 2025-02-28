@@ -34,6 +34,10 @@ async function exitProcess(code: number) {
     const currentTime = Math.floor(Date.now() / 1000);
     const expiredOrders = await redisService.zrangebyscore("delayedOrders", 0, currentTime);
 
+    socket.emit("test", {
+      message: "Hello from job-processor",
+    });
+
     if (!expiredOrders || expiredOrders.length === 0) {
       console.log("No se encontraron órdenes vencidas.");
       return exitProcess(0);

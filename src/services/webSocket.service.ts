@@ -23,6 +23,10 @@ const webSocketService = {
         webSocketService.handleMessage(socket, data);
       });
 
+      socket.on('test', (data: WebSocketMessage) => {
+        console.log('Test event received:', data);
+      })
+
       socket.on('emitToRoom', (data: WebSocketMessage) => {
         const { roomId, message } = data;
         webSocketService.emitToRoom('message', roomId, message);
