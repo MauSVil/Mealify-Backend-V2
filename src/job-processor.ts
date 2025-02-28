@@ -1,6 +1,12 @@
 import { orderService } from "./services/order.service";
 import { redisService } from "./services/redis.service";
-import webSocketService from "./services/webSocket.service";
+import { io } from "socket.io-client";
+
+const socket = io("wss://tu-servidor.com");
+
+socket.on("connect", () => {
+  console.log("Conectado al servidor WebSocket");
+});
 
 async function exitProcess(code: number) {
   try {
@@ -10,6 +16,7 @@ async function exitProcess(code: number) {
       await redisService.client.quit();
       console.log("Redis desconectado.");
     }
+    socket.close();
   } catch (error) {
     console.error("Error al cerrar conexiones:", error);
   } finally {
@@ -37,8 +44,9 @@ async function exitProcess(code: number) {
         console.log(`Procesando orden vencida #${orderId}`);
         await orderService.updateOne(Number(orderId), { status: "restaurant_delayed", delay_date: new Date() });
 
-        await webSocketService.emitToRoom("message", `order_${orderId}`, {
+        socket.emit("message", {
           type: "order_status_change",
+          room: `order_${orderId}`,
           payload: { status: "restaurant_delayed" },
         });
 
