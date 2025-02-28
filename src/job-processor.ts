@@ -16,11 +16,6 @@ async function exitProcess(code: number) {
       await redisService.client.quit();
       console.log("Redis desconectado.");
     }
-
-    if (socket.connected) {
-      socket.disconnect();
-      console.log("Desconectado del servidor WebSocket.");
-    }
   } catch (error) {
     console.error("Error al cerrar conexiones:", error);
   } finally {
@@ -37,10 +32,6 @@ async function exitProcess(code: number) {
 
     const currentTime = Math.floor(Date.now() / 1000);
     const expiredOrders = await redisService.zrangebyscore("delayedOrders", 0, currentTime);
-
-    socket.emit("test", {
-      message: "Hello from job-processor",
-    });
 
     if (!expiredOrders || expiredOrders.length === 0) {
       console.log("No se encontraron órdenes vencidas.");
