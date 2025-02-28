@@ -1,12 +1,12 @@
 import { orderService } from "./services/order.service";
 import { redisService } from "./services/redis.service";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 
-const socket = io("https://mealify-backv2.mausvil.dev");
+// const socket = io("https://mealify-backv2.mausvil.dev");
 
-socket.on("connect", () => {
-  console.log("Conectado al servidor WebSocket");
-});
+// socket.on("connect", () => {
+//   console.log("Conectado al servidor WebSocket");
+// });
 
 async function exitProcess(code: number) {
   try {
@@ -43,13 +43,13 @@ async function exitProcess(code: number) {
         console.log(`Procesando orden vencida #${orderId}`);
         await orderService.updateOne(Number(orderId), { status: "restaurant_delayed", delay_date: new Date() });
 
-        socket.emit("emitToRoom", {
-          roomId: `order_${orderId}`,
-          message: {
-            type: "order_status_change",
-            payload: { status: "restaurant_delayed" },
-          }
-        })
+        // socket.emit("emitToRoom", {
+        //   roomId: `order_${orderId}`,
+        //   message: {
+        //     type: "order_status_change",
+        //     payload: { status: "restaurant_delayed" },
+        //   }
+        // })
 
         await redisService.zrem("delayedOrders", orderId);
         console.log(`Orden #${orderId} procesada.`);
