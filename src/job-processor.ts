@@ -44,11 +44,13 @@ async function exitProcess(code: number) {
         console.log(`Procesando orden vencida #${orderId}`);
         await orderService.updateOne(Number(orderId), { status: "restaurant_delayed", delay_date: new Date() });
 
-        socket.emit("message", {
-          type: "order_status_change",
-          room: `order_${orderId}`,
-          payload: { status: "restaurant_delayed" },
-        });
+        socket.emit("emitToRoom", {
+          roomId: `order_${orderId}`,
+          message: {
+            type: "order_status_change",
+            payload: { status: "restaurant_delayed" },
+          }
+        })
 
         await redisService.zrem("delayedOrders", orderId);
         console.log(`Orden #${orderId} procesada.`);

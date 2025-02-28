@@ -23,6 +23,11 @@ const webSocketService = {
         webSocketService.handleMessage(socket, data);
       });
 
+      socket.on('emitToRoom', (data: WebSocketMessage) => {
+        const { roomId, message } = data;
+        webSocketService.emitToRoom('message', roomId, message);
+      });
+
       socket.on("customEvent", (data: any) => {
         socket.emit("ack", { message: "Event received!" });
       });
