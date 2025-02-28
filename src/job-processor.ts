@@ -2,7 +2,7 @@ import { orderService } from "./services/order.service";
 import { redisService } from "./services/redis.service";
 import { io } from "socket.io-client";
 
-const socket = io("wss://tu-servidor.com");
+const socket = io("https://mealify-backv2.mausvil.dev");
 
 socket.on("connect", () => {
   console.log("Conectado al servidor WebSocket");
