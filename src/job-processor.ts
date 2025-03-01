@@ -55,6 +55,14 @@ async function exitProcess(code: number) {
       }
     });
 
+    socket.emit("emitToRoom", {
+      roomId: `business_1`,
+      message: {
+        type: "order_status_change",
+        payload: { status: "restaurant_delayed" },
+      }
+    })
+
     if (!expiredOrders || expiredOrders.length === 0) {
       console.log("No se encontraron órdenes vencidas.");
       return exitProcess(0);
@@ -64,6 +72,7 @@ async function exitProcess(code: number) {
       try {
         console.log(`Procesando orden vencida #${orderId}`);
         await orderService.updateOne(Number(orderId), { status: "restaurant_delayed", delay_date: new Date() });
+        const orderFound = await orderService.findById({ id: Number(orderId), includeRelations: { restaurants: true } });
 
         socket.emit("emitToRoom", {
           roomId: `order_${orderId}`,
@@ -72,6 +81,14 @@ async function exitProcess(code: number) {
             payload: { status: "restaurant_delayed" },
           }
         })
+
+        // socket.emit("emitToRoom", {
+        //   roomId: `business_${orderFound.restaurants.id}`,
+        //   message: {
+        //     type: "order_status_change",
+        //     payload: { status: "restaurant_delayed" },
+        //   }
+        // })
 
         await redisService.zrem("delayedOrders", orderId);
         console.log(`Orden #${orderId} procesada.`);
