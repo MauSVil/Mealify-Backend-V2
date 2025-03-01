@@ -15,6 +15,7 @@ socket.on("connect", () => {
 
 socket.on("connect_error", (err) => {
   console.error("Error al conectar al WebSocket:", err.message);
+  process.exit(1);
 });
 
 async function exitProcess(code: number) {
