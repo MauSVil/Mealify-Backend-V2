@@ -57,10 +57,7 @@ async function exitProcess(code: number) {
 
     socket.emit("emitToRoom", {
       roomId: `business_1`,
-      message: {
-        type: "order_status_change",
-        payload: { status: "restaurant_delayed" },
-      }
+      message: 'New-status',
     })
 
     if (!expiredOrders || expiredOrders.length === 0) {
