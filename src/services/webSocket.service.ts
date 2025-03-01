@@ -29,6 +29,7 @@ const webSocketService = {
 
       socket.on('emitToRoom', (data: WebSocketMessage) => {
         const { roomId, message } = data;
+        console.log({ roomId, message });
         webSocketService.emitToRoom('message', roomId, message);
       });
 
