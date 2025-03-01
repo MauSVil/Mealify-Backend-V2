@@ -56,11 +56,6 @@ async function exitProcess(code: number) {
       }
     });
 
-    socket.emit("emitToRoom", {
-      roomId: `business_1`,
-      message: 'New-status',
-    })
-
     if (!expiredOrders || expiredOrders.length === 0) {
       console.log("No se encontraron órdenes vencidas.");
       return exitProcess(0);
@@ -80,13 +75,10 @@ async function exitProcess(code: number) {
           }
         })
 
-        // socket.emit("emitToRoom", {
-        //   roomId: `business_${orderFound.restaurants.id}`,
-        //   message: {
-        //     type: "order_status_change",
-        //     payload: { status: "restaurant_delayed" },
-        //   }
-        // })
+        socket.emit("emitToRoom", {
+          roomId: `business_${orderFound.restaurants.id}`,
+          message: 'order_status_change',
+        })
 
         await redisService.zrem("delayedOrders", orderId);
         console.log(`Orden #${orderId} procesada.`);
