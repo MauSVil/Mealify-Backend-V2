@@ -70,11 +70,17 @@ export const orderController = {
     try {
       const { id, ...rest } = req.body;
       if (!id) throw new Error('Id is required');
+      const foundOrder = await orderService.findById({ id: Number(id) });
+
       const updatedOrder = await orderService.updateOne(id, rest);
       if (rest.status) {
         await webSocketService.emitToRoom('message', `order_${updatedOrder.id}`, { type: 'order_status_change', payload: { status: rest.status } });
         switch (rest.status) {
           case 'preparing':
+            if (foundOrder.status === 'cancelled_by_user') {
+              await orderService.updateOne(id, { status: 'cancelled_by_user' });
+              throw new Error('Order already cancelled by user');
+            }
             await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
             break;
           case 'cancelled_by_restaurant':
@@ -115,15 +121,15 @@ export const orderController = {
       const orderLockKey = `order_locked:${id}`;
       const orderCountKey = `driver_orders:${delivery_driver}`;
       const timeWindowKey = `driver_window_expired:${delivery_driver}`;
-    
+
       const lockAcquired = await redisService.set(orderLockKey, delivery_driver, { NX: true, EX: 600 });
-    
+
       if (lockAcquired !== "OK") {
         throw new Error('Order already accepted by another driver');
       }
-    
+
       const currentOrders = await redisService.incr(orderCountKey);
-    
+
       if (currentOrders === 1) {
         await redisService.set(timeWindowKey, '1', { EX: 180 }); // 3 minutes
         await orderQueue.add(
@@ -136,7 +142,7 @@ export const orderController = {
       const timeWindow = await redisService.get(timeWindowKey);
 
       if (!timeWindow) throw new Error('Time window expired');
-    
+
       await orderService.updateOne(id, { driver_id: Number(delivery_driver) });
       res.json({ message: 'Order accepted successfully' });
     } catch (error) {
