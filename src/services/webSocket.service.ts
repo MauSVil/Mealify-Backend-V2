@@ -25,7 +25,7 @@ const webSocketService = {
 
       socket.on('emitToRoom', (data: WebSocketMessage) => {
         const { roomId, message } = data;
-        console.log(`Emitting message to room: ${roomId}`);
+        console.log(`Emitting message to room: ${roomId} 👀`);
         webSocketService.emitToRoom('message', roomId, message);
       });
 
@@ -35,6 +35,7 @@ const webSocketService = {
 
       socket.on("heartbeat", () => {
         socket.emit("heartbeat_ack");
+        console.log(`Heartbeat received from client: ${socket.id} 🤟🏼`);
       });
 
       socket.on("disconnect", (reason: string) => {
@@ -58,7 +59,7 @@ const webSocketService = {
   },
 
   emitToRoom(key: string, roomId: string, message: WebSocketMessage): void {
-    console.log(`Emitting message to room: ${roomId}`);
+    console.log(`Emitting message to room: ${roomId} 💪🏼`);
     io?.to(String(roomId)).emit(key, message);
   },
 

@@ -70,8 +70,6 @@ export const orderController = {
     try {
       const { id, ...rest } = req.body;
 
-      console.log('Updating order', { id, rest });
-
       if (!id) throw new Error('Id is required');
       const foundOrder = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true } });
 
