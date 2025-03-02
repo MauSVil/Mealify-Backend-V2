@@ -73,6 +73,9 @@ export const orderController = {
       const foundOrder = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true } });
 
       const updatedOrder = await orderService.updateOne(id, rest);
+
+      console.log('Order updated', { id, rest });
+
       if (rest.status) {
         await webSocketService.emitToRoom('message', `order_${updatedOrder.id}`, { type: 'order_status_change', payload: { status: rest.status } });
         switch (rest.status) {
