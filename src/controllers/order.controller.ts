@@ -70,17 +70,13 @@ export const orderController = {
     try {
       const { id, ...rest } = req.body;
       if (!id) throw new Error('Id is required');
-      const foundOrder = await orderService.findById({ id: Number(id) });
+      const foundOrder = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true } });
 
       const updatedOrder = await orderService.updateOne(id, rest);
       if (rest.status) {
         await webSocketService.emitToRoom('message', `order_${updatedOrder.id}`, { type: 'order_status_change', payload: { status: rest.status } });
         switch (rest.status) {
           case 'preparing':
-            if (foundOrder.status === 'cancelled_by_user') {
-              await orderService.updateOne(id, { status: 'cancelled_by_user' });
-              throw new Error('Order already cancelled by user');
-            }
             await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
             break;
           case 'cancelled_by_restaurant':
@@ -98,6 +94,10 @@ export const orderController = {
               await redisService.del(`driver_orders:${updatedOrder.driver_id}`);
               await redisService.del(`driver_window_expired:${updatedOrder.driver_id}`);
             }
+            break;
+          case 'restaurant_delayed':
+            await redisService.zrem("delayedOrders", `${id}`);
+            await webSocketService.emitToRoom('message', `business_${foundOrder.restaurants.id}`, { type: 'order_status_change', payload: { status: rest.status, orderId: id } });
             break;
           default:
             break;
