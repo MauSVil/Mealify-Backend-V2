@@ -35,7 +35,7 @@ async function exitProcess(code: number) {
       try {
         console.log(`Procesando orden vencida #${orderId}`);
 
-        await axios.put(`https://mealify-backv2.mausvil.dev/api/orders`, {
+        await axios.put(`https://mealify-backv2.mausvil.dev/orders`, {
           id: orderId,
           status: "restaurant_delayed",
           delay_date: new Date(),
