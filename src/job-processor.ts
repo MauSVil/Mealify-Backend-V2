@@ -31,15 +31,19 @@ async function exitProcess(code: number) {
       return exitProcess(0);
     }
 
+    console.log(`Se encontraron ${expiredOrders.length} órdenes vencidas.`);
+
     for (const orderId of expiredOrders) {
       try {
         console.log(`Procesando orden vencida #${orderId}`);
 
+        console.log("Editando orden...");
         await axios.put(`https://mealify-backv2.mausvil.dev/orders`, {
           id: orderId,
           status: "restaurant_delayed",
           delay_date: new Date(),
         });
+        console.log("Notificación enviada.");
 
         console.log(`Orden #${orderId} procesada.`);
       } catch (error) {
