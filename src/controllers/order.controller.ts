@@ -69,12 +69,13 @@ export const orderController = {
   updateOrder: async (req: Request, res: Response) => {
     try {
       const { id, ...rest } = req.body;
+
+      console.log('Updating order', { id, rest });
+
       if (!id) throw new Error('Id is required');
       const foundOrder = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true } });
 
       const updatedOrder = await orderService.updateOne(id, rest);
-
-      console.log('Order updated', { id, rest });
 
       if (rest.status) {
         await webSocketService.emitToRoom('message', `order_${updatedOrder.id}`, { type: 'order_status_change', payload: { status: rest.status } });
