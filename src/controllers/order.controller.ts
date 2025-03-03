@@ -90,6 +90,7 @@ export const orderController = {
           case 'delivered':
           case 'cancelled_by_delivery':
           case 'cancelled_by_user':
+            await redisService.zrem("delayedOrders", `${id}`);
             await redisService.del(`order_locked:${id}`);
             const currentOrders = await redisService.decr(`driver_orders:${updatedOrder.driver_id}`);
             if (!currentOrders || currentOrders <= 0) {
