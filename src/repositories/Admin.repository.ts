@@ -17,6 +17,9 @@ export const AdminRepository = {
       where: {
         clerk_user_id: clerkId,
       },
+      include: {
+        restaurants: true,
+      }
     });
   },
   findByStripeId: async (stripeId: string): Promise<Admin | null> => {
