@@ -82,6 +82,7 @@ export const orderController = {
             await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
             break;
           case 'cancelled_by_restaurant':
+            await redisService.zrem("delayedOrders", `${id}`);
             await stripeService.refundPayment({ paymentIntentId: updatedOrder.payment_intent_id });
             break;
           case 'ready_for_pickup':
@@ -90,7 +91,6 @@ export const orderController = {
           case 'delivered':
           case 'cancelled_by_delivery':
           case 'cancelled_by_user':
-            await redisService.zrem("delayedOrders", `${id}`);
             await redisService.del(`order_locked:${id}`);
             const currentOrders = await redisService.decr(`driver_orders:${updatedOrder.driver_id}`);
             if (!currentOrders || currentOrders <= 0) {
