@@ -33,11 +33,6 @@ const webSocketService = {
         socket.emit("ack", { message: "Event received!" });
       });
 
-      socket.on("heartbeat", () => {
-        socket.emit("heartbeat_ack");
-        console.log(`Heartbeat received from client: ${socket.id} 🤟🏼`);
-      });
-
       socket.on("disconnect", (reason: string) => {
         console.log(`Client disconnected: ${socket.id}, Reason: ${reason}`);
       });
