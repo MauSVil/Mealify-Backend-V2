@@ -6,7 +6,7 @@ import webSocketService from '../services/webSocket.service';
 import { redisService } from '../services/redis.service';
 import { stripeService } from '../services/stripe.service';
 import { orderQueue } from '../services/queue.service';
-import { pushNotificationService } from 'src/services/pushNotification.service';
+import { pushNotificationService } from '../services/pushNotification.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
