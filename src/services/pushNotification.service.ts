@@ -13,11 +13,7 @@ export const pushNotificationService = {
       body,
     }));
 
-    console.log({ messages });
-
     const chunks = expo.chunkPushNotifications(messages);
-
-    console.log({ chunks });
 
     for (const chunk of chunks) {
       try {
