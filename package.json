@@ -33,6 +33,7 @@
     "cors": "^2.8.5",
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",
+    "expo-server-sdk": "^3.14.0",
     "express": "^4.21.2",
     "ioredis": "^5.4.2",
     "minio": "^8.0.3",

@@ -6,6 +6,7 @@ import webSocketService from '../services/webSocket.service';
 import { redisService } from '../services/redis.service';
 import { stripeService } from '../services/stripe.service';
 import { orderQueue } from '../services/queue.service';
+import { pushNotificationService } from 'src/services/pushNotification.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -80,6 +81,7 @@ export const orderController = {
         switch (rest.status) {
           case 'preparing':
             await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
+            await pushNotificationService.send(["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"], 'Order Update', 'Your order is being prepared');
             break;
           case 'cancelled_by_restaurant':
             await redisService.zrem("delayedOrders", `${id}`);
