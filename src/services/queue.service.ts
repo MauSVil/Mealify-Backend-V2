@@ -27,42 +27,58 @@ export const orderQueue = new Queue('orderQueue', {
 });
 
 export const orderWorker = new Worker(
-  'orderQueue',
+  "orderQueue",
   async (job: Job) => {
     try {
-      if (job.name === 'assignDelivery') {
+      if (job.name === "assignDelivery") {
         const { orderId } = job.data;
-        const order = await orderService.findById({ id: Number(orderId), includeRelations: { restaurants: true } });
-        if (!order) throw new Error(`Order with id ${orderId} not found`);
+        
+        console.log(`🔄 Processing order assignment: ${orderId}`);
+        
+        const order = await orderService.findById({
+          id: Number(orderId),
+          includeRelations: { restaurants: true }
+        });
+
+        if (!order) throw new Error(`❌ Order with id ${orderId} not found`);
+
         const deliveryDrivers = await deliveryDriverService.findCandidates(
           { longitude: order.longitude, latitude: order.latitude },
           { longitude: order.restaurants.longitude, latitude: order.restaurants.latitude }
         );
 
-        if (!deliveryDrivers.length) throw new Error(`No delivery drivers found for order ${orderId}`);
+        if (!deliveryDrivers.length) {
+          console.log(`⚠️ No delivery drivers found for order ${orderId}`);
+          return;
+        }
 
-        let someOneAccepted = false;
-        
         for (const driver of deliveryDrivers) {
-          const orderlock = await redisService.get(`order_locked:${orderId}`);
-          if (orderlock) {
-            someOneAccepted = true;
-            break;
+          const orderLock = await redisService.get(`order_locked:${orderId}`);
+          
+          if (orderLock) {
+            console.log(`✅ Order ${orderId} already accepted by driver ${orderLock}`);
+            return;
           }
 
-          console.log('Asking driver', driver.id, 'to take order', orderId);
+          console.log(`📢 Asking driver ${driver.id} to take order ${orderId}`);
+
           await sleep(30000);
         }
 
-        if (!someOneAccepted) throw new Error('No driver accepted the order');
+        const finalOrderLock = await redisService.get(`order_locked:${orderId}`);
+        if (!finalOrderLock) {
+          console.log(`⏳ No driver accepted order ${orderId} within the time window.`);
+          throw new Error(`❌ No driver accepted order ${orderId} within the time window.`);
+        }
+
+        console.log(`🚀 Order ${orderId} confirmed by driver ${finalOrderLock}`);
       }
-      if (job.name === 'notifyDriverToDeliver') {
-        console.log('Notifying driver to deliver order', job.data);
+
+      if (job.name === "notifyDriverToDeliver") {
+        console.log("📦 Notifying driver to deliver order", job.data);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(`Error processing job ${job.id}: ${error.message}`);
-      }
+      console.error(`💀 Error processing job ${job.id}: ${error instanceof Error ? error.message : error}`);
       throw error;
     }
   },

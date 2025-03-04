@@ -39,10 +39,13 @@ export const deliveryDriverService = {
     for (const driver of deliveryDrivers) {
       const { id } = driver;
       const orderCountKey = `driver_orders:${id}`;
+      const timeWindowKey = `driver_window_expired:${id}`;
   
       const orderCount = await redisService.get(orderCountKey);
+      const windowExists = await redisService.get(timeWindowKey);
 
       if (Number(orderCount) >= 3) continue;
+      if (!windowExists) continue;
 
       eligibleDrivers.push(driver);
     }
