@@ -18,7 +18,8 @@ export const pushNotificationService = {
     for (const chunk of chunks) {
       try {
         console.log('Sending chunk');
-        await expo.sendPushNotificationsAsync(chunk);
+        const resps = await expo.sendPushNotificationsAsync(chunk);
+        console.log(resps);
       } catch (error) {
         console.error(error);
       }
