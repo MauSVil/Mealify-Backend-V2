@@ -84,8 +84,8 @@ export const orderController = {
             await pushNotificationService.send(
               // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
               ["ExponentPushToken[7SkR6JLS6i-4aGDLBiS0A9]", "ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
-              'Acutalización de Orden',
-              'Tu orden está siendo preparada'
+              '🔔 Acutalización de Orden',
+              '🥳 Tu orden está siendo preparada'
             );
             break;
           case 'cancelled_by_restaurant':
@@ -93,8 +93,8 @@ export const orderController = {
             await pushNotificationService.send(
               // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
               ["ExponentPushToken[7SkR6JLS6i-4aGDLBiS0A9]"],
-              'Acutalización de Orden',
-              'Tu orden ha sido cancelada'
+              '🔔 Acutalización de Orden',
+              '❌ Tu orden ha sido cancelada'
             );
             await stripeService.refundPayment({ paymentIntentId: updatedOrder.payment_intent_id });
             break;
@@ -103,8 +103,8 @@ export const orderController = {
             await pushNotificationService.send(
               // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
               ["ExponentPushToken[7SkR6JLS6i-4aGDLBiS0A9]"],
-              'Acutalización de Orden',
-              'Tu orden está lista para ser recogida'
+              '🔔 Acutalización de Orden',
+              '🏍️ Tu orden está lista para ser recogida'
             );
             break;
           case 'delivered':
@@ -123,8 +123,8 @@ export const orderController = {
             await pushNotificationService.send(
               // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
               ["ExponentPushToken[7SkR6JLS6i-4aGDLBiS0A9]"],
-              'Acutalización de Orden',
-              'Tu orden tiene un retraso por parte del restaurante'
+              '🔔 Acutalización de Orden',
+              '⏰ Tu orden tiene un retraso por parte del restaurante'
             );
             break;
           default:
