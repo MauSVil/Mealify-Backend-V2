@@ -1,11 +1,11 @@
 import { Router } from 'express';
 
 import { adminController } from '../controllers/admin.controller';
-import { requireAuth } from '@clerk/express';
+import { dynamicClerkMiddleware } from '../middlewares/clerkMiddleware';
 
 const router = Router();
 
-router.get('/', requireAuth(), adminController.getAdmin);
-router.put('/', requireAuth(), adminController.updateAdmin);
+router.get('/', dynamicClerkMiddleware, adminController.getAdmin);
+router.put('/', dynamicClerkMiddleware, adminController.updateAdmin);
 
 export default router;

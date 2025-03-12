@@ -9,7 +9,9 @@ export const userAddressController = {
     try {
       const { userId } = req.auth!;
       const user = await userService.getUserByClerkId(userId);
+
       if (!user || !user.id) throw new Error('User not found');
+
       const addresses = await userAddressService.findByUserId(user.id);
       res.status(200).json(addresses);
     } catch (error) {

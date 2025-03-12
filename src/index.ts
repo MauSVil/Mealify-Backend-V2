@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { requireAuth } from "@clerk/express";
 
 import userRoutes from './routes/user.route';
 import adminRoutes from './routes/admin.route';
@@ -16,6 +15,7 @@ import deliveryDriverRoutes from './routes/deliveryDriver.route';
 import { createServer } from "http";
 import webSocketService from "./services/webSocket.service";
 import { redisService } from "./services/redis.service";
+import { dynamicClerkMiddleware } from "./middlewares/clerkMiddleware";
 
 const app = express();
 const server = createServer(app);
@@ -40,12 +40,11 @@ app.get("/version", (req, res) => {
   res.send("1.0.0");
 });
 
-// TODO: Fix requireAuth() middleware
 app.use('/users', userRoutes);
 app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/restaurants', restaurantRoutes);
-app.use('/user-addresses', requireAuth(), userAddressRoutes);
+app.use('/user-addresses', dynamicClerkMiddleware, userAddressRoutes);
 app.use('/products', productRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/orders', orderRoutes);
