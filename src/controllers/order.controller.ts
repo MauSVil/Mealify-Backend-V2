@@ -118,8 +118,7 @@ export const orderController = {
             await redisService.zrem("delayedOrders", `${id}`);
             await webSocketService.emitToRoom('message', `business_${foundOrder.restaurants.id}`, { type: 'order_status_change', payload: { status: rest.status, orderId: id } });
             await pushNotificationService.send(
-              // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
-              ["ExponentPushToken[7SkR6JLS6i-4aGDLBiS0A9]"],
+              foundOrder.users.tokens,
               '🔔 Acutalización de Orden',
               '⏰ Tu orden tiene un retraso por parte del restaurante'
             );
