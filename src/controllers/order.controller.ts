@@ -83,7 +83,7 @@ export const orderController = {
             await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
             await pushNotificationService.send(
               // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
-              ["ExponentPushToken[7SkR6JLS6i-4aGDLBiS0A9]", "ExponentPushToken[nXbQLPNI9SCeK-CoxS97kp]"],
+              ["ExponentPushToken[nXbQLPNI9SCeK-CoxS97kp]"],
               '🔔 Acutalización de Orden',
               '🥳 Tu orden está siendo preparada'
             );
