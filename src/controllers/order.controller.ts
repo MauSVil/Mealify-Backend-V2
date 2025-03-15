@@ -72,7 +72,7 @@ export const orderController = {
       const { id, ...rest } = req.body;
 
       if (!id) throw new Error('Id is required');
-      const foundOrder = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true } });
+      const foundOrder = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true, users: true } });
 
       const updatedOrder = await orderService.updateOne(id, rest);
 
@@ -82,8 +82,7 @@ export const orderController = {
           case 'preparing':
             await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
             await pushNotificationService.send(
-              // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
-              ["ExponentPushToken[nXbQLPNI9SCeK-CoxS97kp]"],
+              foundOrder.users.tokens,
               '🔔 Acutalización de Orden',
               '🥳 Tu orden está siendo preparada'
             );
@@ -91,8 +90,7 @@ export const orderController = {
           case 'cancelled_by_restaurant':
             await redisService.zrem("delayedOrders", `${id}`);
             await pushNotificationService.send(
-              // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
-              ["ExponentPushToken[7SkR6JLS6i-4aGDLBiS0A9]"],
+              foundOrder.users.tokens,
               '🔔 Acutalización de Orden',
               '❌ Tu orden ha sido cancelada'
             );
@@ -101,8 +99,7 @@ export const orderController = {
           case 'ready_for_pickup':
             await orderQueue.add('assignDelivery', { orderId: updatedOrder.id });
             await pushNotificationService.send(
-              // ["ExponentPushToken[W-VtPrHOyuI_ZMSID_TLrL]"],
-              ["ExponentPushToken[7SkR6JLS6i-4aGDLBiS0A9]"],
+              foundOrder.users.tokens,
               '🔔 Acutalización de Orden',
               '🏍️ Tu orden está lista para ser recogida'
             );
