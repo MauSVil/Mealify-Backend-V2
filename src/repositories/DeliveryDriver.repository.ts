@@ -37,4 +37,11 @@ export const DeliveryDriverRepository = {
       },
     });
   },
+  findByClerkId: async (clerkId: string): Promise<DeliveryDriver | null> => {
+    return await prisma.delivery_drivers.findFirst({
+      where: {
+        clerk_user_id: clerkId,
+      },
+    });
+  },
 }

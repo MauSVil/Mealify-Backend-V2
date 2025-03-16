@@ -22,6 +22,10 @@ export const deliveryDriverService = {
     const deliveryDriver = await DeliveryDriverRepository.deleteById(id);
     return deliveryDriver;
   },
+  getUserByClerkId: async (clerkId: string) => {
+    const user = await DeliveryDriverRepository.findByClerkId(clerkId);
+    return user;
+  },
   findCandidates: async (
     restaurantLocation: { longitude: Decimal; latitude: Decimal },
     userLocation: { longitude: Decimal; latitude: Decimal }

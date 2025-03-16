@@ -25,5 +25,38 @@ export const deliveryDriverController = {
       }
       res.status(500).json({ message: 'Internal server error' });
     }
-  }
+  },
+  getUserByClerkId: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      if (!id) throw new Error("Id is required");
+      const user = await deliveryDriverService.getUserByClerkId(id);
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+      res.status(200).json(user);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+  updateDriver: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      if (!id) throw new Error("Id is required");
+      const idNumber = parseInt(id);
+      const userUpdated = await deliveryDriverService.updateDeliveryDriver(idNumber, req.body);
+      res.status(200).json(userUpdated);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
 };
