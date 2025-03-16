@@ -49,7 +49,8 @@ export const deliveryDriverService = {
       const windowExists = await redisService.get(timeWindowKey);
 
       if (Number(orderCount) >= 3) continue;
-      if (!windowExists) continue;
+
+      if (Number(orderCount) >= 1 && !windowExists) continue;
 
       eligibleDrivers.push(driver);
     }
