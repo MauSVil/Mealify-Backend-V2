@@ -37,6 +37,7 @@ model delivery_drivers {
   updated_at    DateTime? @default(now()) @db.Timestamp(6)
   latitude      Decimal?  @db.Decimal(9, 6)
   longitude     Decimal?  @db.Decimal(9, 6)
+  tokens        String[]  @default([])
   orders        orders[]
 }
 
