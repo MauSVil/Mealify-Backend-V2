@@ -40,8 +40,6 @@ export const deliveryDriverService = {
 
     const eligibleDrivers: DeliveryDriver[] = [];
 
-    console.log({ deliveryDrivers });
-
     for (const driver of deliveryDrivers) {
       const { id } = driver;
       const orderCountKey = `driver_orders:${id}`;
@@ -49,8 +47,6 @@ export const deliveryDriverService = {
   
       const orderCount = await redisService.get(orderCountKey);
       const windowExists = await redisService.get(timeWindowKey);
-
-      console.log({ orderCount, windowExists });
 
       if (Number(orderCount) >= 3) continue;
       if (Number(orderCount) >= 1 && !windowExists) continue;
