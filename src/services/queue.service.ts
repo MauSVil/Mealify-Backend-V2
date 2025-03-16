@@ -53,7 +53,10 @@ export const orderWorker = new Worker(
           return;
         }
 
+        console.log(`🚛 Found ${deliveryDrivers.length} drivers for order ${orderId}`);
+
         for (const driver of deliveryDrivers) {
+          console.log(`🚗 Notifying driver ${driver.id} about order ${orderId}`);
           const orderLock = await redisService.get(`order_locked:${orderId}`);
           
           if (orderLock) {
