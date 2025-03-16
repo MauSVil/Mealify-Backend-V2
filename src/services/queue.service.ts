@@ -68,6 +68,9 @@ export const orderWorker = new Worker(
             driver.tokens,
             `🚨 Nueva orden disponible`,
             `🍔 Acepta la orden lo antes posible`,
+            {
+              screen: `/accept-order/${orderId}`,
+            }
           )
 
           console.log(`📢 Asking driver ${driver.id} to take order ${orderId}`);

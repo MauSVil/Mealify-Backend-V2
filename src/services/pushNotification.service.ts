@@ -5,12 +5,13 @@ const expo = new Expo({
 });
 
 export const pushNotificationService = {
-  send: async (tokens: string[], title: string, body: string) => {
+  send: async (tokens: string[], title: string, body: string, data: Record<string, unknown> = {}) => {
     const messages = tokens.map(token => ({
       to: token,
       sound: 'default',
       title,
       body,
+      data,
     }));
 
     const chunks = expo.chunkPushNotifications(messages);
