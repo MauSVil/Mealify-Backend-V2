@@ -22,7 +22,7 @@ export const orderQueue = new Queue('orderQueue', {
     attempts: 5,
     backoff: {
       type: 'exponential',
-      delay: 10000,
+      delay: 30000,
     },
   },
 });
