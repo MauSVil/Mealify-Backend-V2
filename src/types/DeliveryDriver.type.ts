@@ -7,6 +7,7 @@ export const deliveryDriverSchema = z.object({
   phone: z.string().min(1, 'El número de teléfono es obligatorio'),
   email: z.string().email('El correo debe ser válido'),
   clerk_user_id: z.string(),
+  tokens: z.array(z.string()),
   vehicleType: z.string().optional(),
   is_active: z.boolean().default(true),
   latitude:  z.instanceof(Decimal).optional().nullable(),

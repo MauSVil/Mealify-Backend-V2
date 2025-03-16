@@ -3,6 +3,7 @@ import Redis from 'ioredis';
 import { deliveryDriverService } from './deliveryDriver.service';
 import { orderService } from './order.service';
 import { redisService } from './redis.service';
+import { pushNotificationService } from './pushNotification.service';
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -59,6 +60,12 @@ export const orderWorker = new Worker(
             console.log(`✅ Order ${orderId} already accepted by driver ${orderLock}`);
             return;
           }
+
+          await pushNotificationService.send(
+            driver.tokens,
+            `🚨 New order available: ${orderId}`,
+            `Order ${orderId} is available for delivery.`
+          )
 
           console.log(`📢 Asking driver ${driver.id} to take order ${orderId}`);
 
