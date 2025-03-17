@@ -109,4 +109,10 @@ export const redisService = {
       await this.client.persist(key);
     }
   },
+
+  async lpush(key: string, value: string) {
+    if (this.client) {
+      await this.client.lPush(key, value);
+    }
+  }
 };
