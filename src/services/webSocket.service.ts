@@ -32,7 +32,6 @@ const webSocketService = {
 
       socket.on('updateLocation', (data: WebSocketMessage) => {
         const { driverId, lat, lng } = data;
-        console.log(`Updating driver location: ${driverId} ${lat} ${lng} 📍`);
         redisService.set(`location:${driverId}`, JSON.stringify({ lat, lng }))
       });
 
