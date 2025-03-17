@@ -58,6 +58,9 @@ export const deliveryDriverService = {
     for await (const driver of eligibleDrivers) {
       const redisDriverPosition = await redisService.get(`location:${driver.id}`);
       const { lat, lng } = JSON.parse(redisDriverPosition!);
+
+      console.log(`🚗 Driver ${driver.id} is at ${lat}, ${lng}`);
+
       const distanceToRestaurant = mapService.getDistance(
         { lat: latitude, lon: longitude },
         { lat, lon: lng }
