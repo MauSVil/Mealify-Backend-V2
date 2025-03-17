@@ -53,24 +53,27 @@ export const deliveryDriverService = {
 
       eligibleDrivers.push(driver);
     }
-  
-    const candidates = eligibleDrivers.map(driver => {
+
+    const candidates = [];
+    for await (const driver of eligibleDrivers) {
+      const redisDriverPosition = await redisService.get(`location:${driver.id}`);
+      const { lat, lng } = JSON.parse(redisDriverPosition!);
       const distanceToRestaurant = mapService.getDistance(
         { lat: latitude, lon: longitude },
-        { lat: driver.latitude!, lon: driver.longitude! }
+        { lat, lon: lng }
       );
       const distanceToUser = mapService.getDistance(
         { lat: userLatitude, lon: userLongitude },
-        { lat: driver.latitude!, lon: driver.longitude! }
+        { lat, lon: lng }
       );
-  
-      return {
+
+      candidates.push({
         ...driver,
         distanceToRestaurant,
         distanceToUser,
         score: distanceToRestaurant * 0.7 + distanceToUser * 0.3,
-      };
-    });
+      });
+    }
   
     candidates.sort((a, b) => a.score - b.score);
   
