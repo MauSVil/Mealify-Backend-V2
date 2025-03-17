@@ -7,7 +7,7 @@ import { redisService } from '../services/redis.service';
 import { stripeService } from '../services/stripe.service';
 import { orderQueue } from '../services/queue.service';
 import { pushNotificationService } from '../services/pushNotification.service';
-import { deliveryDriverService } from 'src/services/deliveryDriver.service';
+import { deliveryDriverService } from '../services/deliveryDriver.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
