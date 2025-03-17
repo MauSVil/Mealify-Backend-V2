@@ -7,6 +7,7 @@ import { redisService } from '../services/redis.service';
 import { stripeService } from '../services/stripe.service';
 import { orderQueue } from '../services/queue.service';
 import { pushNotificationService } from '../services/pushNotification.service';
+import { deliveryDriverService } from 'src/services/deliveryDriver.service';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -139,14 +140,20 @@ export const orderController = {
   },
   acceptOrder: async (req: Request, res: Response) => {
     try {
-      const { id, delivery_driver } = req.body;
+      const { id } = req.body;
+
+      const { userId } = req.auth!;
+
+      const driverFound = await deliveryDriverService.getUserByClerkId(userId);
+      const delivery_driver = driverFound?.id;
+
       if (!id || !delivery_driver) throw new Error('Id and Delivery Driver are required');
 
       const orderLockKey = `order_locked:${id}`;
       const orderCountKey = `driver_orders:${delivery_driver}`;
       const timeWindowKey = `driver_window_expired:${delivery_driver}`;
 
-      const lockAcquired = await redisService.set(orderLockKey, delivery_driver, { NX: true, EX: 600 });
+      const lockAcquired = await redisService.set(orderLockKey, String(delivery_driver), { NX: true, EX: 600 });
 
       if (lockAcquired !== "OK") {
         throw new Error('Order already accepted by another driver');

@@ -3,7 +3,6 @@ import { DeliveryDriverRepository } from "../repositories/DeliveryDriver.reposit
 import { DeliveryDriver } from "../types/DeliveryDriver.type";
 import { mapService } from "./map.service";
 import { redisService } from "./redis.service";
-import { orderService } from "./order.service";
 
 export const deliveryDriverService = {
   getAllDeliveryDrivers: async () => {
@@ -58,8 +57,6 @@ export const deliveryDriverService = {
     for await (const driver of eligibleDrivers) {
       const redisDriverPosition = await redisService.get(`location:${driver.id}`);
       const { lat, lng } = JSON.parse(redisDriverPosition!);
-
-      console.log(`🚗 Driver ${driver.id} is at ${lat}, ${lng}`);
 
       const distanceToRestaurant = mapService.getDistance(
         { lat: latitude, lon: longitude },

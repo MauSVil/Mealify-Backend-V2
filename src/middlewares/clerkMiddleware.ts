@@ -1,9 +1,9 @@
 import { verifyToken } from '@clerk/express';
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 
 const adminSecretKey = process.env.CLERK_ADMIN_SECRET_KEY!;
 const userSecretKey = process.env.CLERK_USER_SECRET_KEY!;
+const deliveryDriverSecretKey = process.env.CLERK_DELIVERY_DRIVER_SECRET_KEY!;
 
 interface AuthenticatedRequest extends Request {
   auth?: any;
@@ -37,6 +37,18 @@ export const dynamicClerkMiddleware = async (
   try {
     const verifiedToken = await verifyToken(token, {
       secretKey: userSecretKey,
+    });
+
+    req.auth = {
+      userId: verifiedToken.sub,
+    };
+    return next();
+  } catch (userError) {
+  }
+
+  try {
+    const verifiedToken = await verifyToken(token, {
+      secretKey: deliveryDriverSecretKey,
     });
 
     req.auth = {
