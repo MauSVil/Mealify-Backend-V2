@@ -47,6 +47,7 @@ export const dynamicClerkMiddleware = async (
   }
 
   try {
+    console.log(token, deliveryDriverSecretKey);
     const verifiedToken = await verifyToken(token, {
       secretKey: deliveryDriverSecretKey,
     });
@@ -56,6 +57,7 @@ export const dynamicClerkMiddleware = async (
     };
     return next();
   } catch (userError) {
+    console.log(userError);
     return res.status(401).json({ error: 'Token inválido para ambas instancias de Clerk' });
   }
 };
