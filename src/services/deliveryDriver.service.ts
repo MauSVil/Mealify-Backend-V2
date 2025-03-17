@@ -37,24 +37,24 @@ export const deliveryDriverService = {
       includeRelations: { orders: true },
     });
 
-    const eligibleDrivers: DeliveryDriver[] = [];
+    // const eligibleDrivers: DeliveryDriver[] = [];
 
-    for (const driver of deliveryDrivers) {
-      const { id } = driver;
-      const orderCountKey = `driver_orders:${id}`;
-      const timeWindowKey = `driver_window_expired:${id}`;
+    // for (const driver of deliveryDrivers) {
+    //   const { id } = driver;
+    //   const orderCountKey = `driver_orders:${id}`;
+    //   const timeWindowKey = `driver_window_expired:${id}`;
   
-      const orderCount = await redisService.get(orderCountKey);
-      const windowExists = await redisService.get(timeWindowKey);
+    //   const orderCount = await redisService.get(orderCountKey);
+    //   const windowExists = await redisService.get(timeWindowKey);
 
-      if (Number(orderCount) >= 3) continue;
-      if (Number(orderCount) >= 1 && !windowExists) continue;
+    //   if (Number(orderCount) >= 3) continue;
+    //   if (Number(orderCount) >= 1 && !windowExists) continue;
 
-      eligibleDrivers.push(driver);
-    }
+    //   eligibleDrivers.push(driver);
+    // }
 
     const candidates = [];
-    for await (const driver of eligibleDrivers) {
+    for await (const driver of deliveryDrivers) {
       const redisDriverPosition = await redisService.get(`location:${driver.id}`);
       const { lat, lng } = JSON.parse(redisDriverPosition!);
 
