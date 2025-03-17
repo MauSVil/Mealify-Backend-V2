@@ -29,6 +29,10 @@ const webSocketService = {
         webSocketService.emitToRoom('message', roomId, message);
       });
 
+      socket.on('updateLocation', (data: WebSocketMessage) => {
+        console.log(`Updating driver location: ${data}`);
+      });
+
       socket.on("customEvent", (data: any) => {
         socket.emit("ack", { message: "Event received!" });
       });
