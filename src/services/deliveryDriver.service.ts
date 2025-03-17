@@ -69,6 +69,8 @@ export const deliveryDriverService = {
 
       candidates.push({
         ...driver,
+        latitude: lat,
+        longitude: lng,
         distanceToRestaurant,
         distanceToUser,
         score: distanceToRestaurant * 0.7 + distanceToUser * 0.3,
