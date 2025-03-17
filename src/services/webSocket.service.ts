@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { Server as HTTPServer } from "http";
+import { redisService } from "./redis.service";
 
 interface WebSocketMessage {
   type: string;
@@ -30,7 +31,9 @@ const webSocketService = {
       });
 
       socket.on('updateLocation', (data: WebSocketMessage) => {
-        console.log(`Updating driver location: ${JSON.stringify(data, null, 2)}`);
+        const { driverId, lat, lng } = data;
+        console.log(`Updating driver location: ${driverId} ${lat} ${lng} 📍`);
+        redisService.set(`location:${driverId}`, JSON.stringify({ lat, lng }))
       });
 
       socket.on("customEvent", (data: any) => {
