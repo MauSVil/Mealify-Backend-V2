@@ -30,7 +30,7 @@ const webSocketService = {
       });
 
       socket.on('updateLocation', (data: WebSocketMessage) => {
-        console.log(`Updating driver location: ${data}`);
+        console.log(`Updating driver location: ${JSON.stringify(data, null, 2)}`);
       });
 
       socket.on("customEvent", (data: any) => {
