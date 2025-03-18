@@ -160,6 +160,8 @@ export const orderController = {
       const currentOrders = await redisService.get(orderCountKey);
       if (Number(currentOrders) === 1) throw new Error('Driver already has an order in progress');
 
+      await redisService.incr(orderCountKey);
+
       // const currentOrders = await redisService.incr(orderCountKey);
 
       // if (currentOrders === 1) {
