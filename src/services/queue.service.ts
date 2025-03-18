@@ -33,9 +33,6 @@ export const orderWorker = new Worker(
     try {
       if (job.name === "assignDelivery") {
         const { orderId } = job.data;
-        
-        console.log(`🔄 Processing order assignment: ${orderId}`);
-        
         const order = await orderService.findById({
           id: Number(orderId),
           includeRelations: { restaurants: true }
