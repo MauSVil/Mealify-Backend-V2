@@ -11,6 +11,7 @@ import paymentRoutes from './routes/payment.route';
 import orderRoutes from './routes/order.route';
 import stripeRoutes from './routes/stripe.route';
 import deliveryDriverRoutes from './routes/deliveryDriver.route';
+import mapRoutes from './routes/map.route';
 
 import { createServer } from "http";
 import webSocketService from "./services/webSocket.service";
@@ -50,6 +51,7 @@ app.use('/payments', paymentRoutes);
 app.use('/orders', orderRoutes);
 app.use('/stripe', stripeRoutes);
 app.use('/delivery-drivers', deliveryDriverRoutes);
+app.use('/maps', mapRoutes);
 
 webSocketService.initialize(server);
 

@@ -138,7 +138,7 @@ export const orderController = {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   },
-  acceptOrder: async (req: Request, res: Response) => {
+  acceptOrder: async (req: RequestWithAuth, res: Response) => {
     try {
       const { id } = req.body;
 
