@@ -13,7 +13,7 @@ export const deliveryDriverService = {
     const deliveryDriver = await DeliveryDriverRepository.findById(id);
     return deliveryDriver;
   },
-  updateDeliveryDriver: async (id: number, deliveryDriverData: DeliveryDriver) => {
+  updateDeliveryDriver: async (id: number, deliveryDriverData: Partial<DeliveryDriver>) => {
     const deliveryDriver = await DeliveryDriverRepository.updateOne(id, deliveryDriverData);
     return deliveryDriver;
   },
@@ -33,28 +33,28 @@ export const deliveryDriverService = {
     const { longitude: userLongitude, latitude: userLatitude } = userLocation;
   
     const deliveryDrivers = await DeliveryDriverRepository.findAll({
-      where: { is_active: true },
+      where: { is_active: true, status: 'available' },
       includeRelations: { orders: true },
     });
 
-    // const eligibleDrivers: DeliveryDriver[] = [];
+    const eligibleDrivers: DeliveryDriver[] = [];
 
-    // for (const driver of deliveryDrivers) {
-    //   const { id } = driver;
-    //   const orderCountKey = `driver_orders:${id}`;
-    //   const timeWindowKey = `driver_window_expired:${id}`;
+    for (const driver of deliveryDrivers) {
+      const { id } = driver;
+      const orderCountKey = `driver_orders:${id}`;
+      // const timeWindowKey = `driver_window_expired:${id}`;
   
-    //   const orderCount = await redisService.get(orderCountKey);
-    //   const windowExists = await redisService.get(timeWindowKey);
+      const orderCount = await redisService.get(orderCountKey);
+      // const windowExists = await redisService.get(timeWindowKey);
 
-    //   if (Number(orderCount) >= 3) continue;
-    //   if (Number(orderCount) >= 1 && !windowExists) continue;
+      if (Number(orderCount) === 1) continue;
+      // if (Number(orderCount) >= 1 && !windowExists) continue;
 
-    //   eligibleDrivers.push(driver);
-    // }
+      eligibleDrivers.push(driver);
+    }
 
     const candidates = [];
-    for await (const driver of deliveryDrivers) {
+    for await (const driver of eligibleDrivers) {
       const redisDriverPosition = await redisService.get(`location:${driver.id}`);
       const { lat, lng } = JSON.parse(redisDriverPosition!);
 

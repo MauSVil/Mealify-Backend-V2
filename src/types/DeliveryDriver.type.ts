@@ -10,6 +10,7 @@ export const deliveryDriverSchema = z.object({
   tokens: z.array(z.string()),
   vehicleType: z.string().optional(),
   is_active: z.boolean().default(true),
+  status: z.enum(['available', 'busy', 'offline']).default('available'),
   latitude:  z.instanceof(Decimal).optional().nullable(),
   longitude: z.instanceof(Decimal).optional().nullable(),
   createdAt: z.date().optional(),

@@ -50,7 +50,7 @@ export const orderWorker = new Worker(
 
         if (!deliveryDrivers.length) {
           console.log(`⚠️ No delivery drivers found for order ${orderId}`);
-          return;
+          throw new Error(`❌ No delivery drivers found for order ${orderId}`);
         }
 
         console.log(`🚛 Found ${deliveryDrivers.length} drivers for order ${orderId}`);

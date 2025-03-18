@@ -151,30 +151,32 @@ export const orderController = {
 
       const orderLockKey = `order_locked:${id}`;
       const orderCountKey = `driver_orders:${delivery_driver}`;
-      const timeWindowKey = `driver_window_expired:${delivery_driver}`;
+      // const timeWindowKey = `driver_window_expired:${delivery_driver}`;
 
       const lockAcquired = await redisService.set(orderLockKey, String(delivery_driver), { NX: true, EX: 600 });
 
-      if (lockAcquired !== "OK") {
-        throw new Error('Order already accepted by another driver');
-      }
+      if (lockAcquired !== "OK") throw new Error('Order already accepted by another driver');
 
-      const currentOrders = await redisService.incr(orderCountKey);
+      const currentOrders = await redisService.get(orderCountKey);
+      if (Number(currentOrders) === 1) throw new Error('Driver already has an order in progress');
 
-      if (currentOrders === 1) {
-        await redisService.set(timeWindowKey, '1', { EX: 180 }); // 3 minutes
-        await orderQueue.add(
-          'notifyDriverToDeliver',
-          { driverId: delivery_driver },
-          { delay: 3 * 60 * 1000 }
-        );
-      }
+      // const currentOrders = await redisService.incr(orderCountKey);
 
-      const timeWindow = await redisService.get(timeWindowKey);
+      // if (currentOrders === 1) {
+      //   await redisService.set(timeWindowKey, '1', { EX: 180 }); // 3 minutes
+      //   await orderQueue.add(
+      //     'notifyDriverToDeliver',
+      //     { driverId: delivery_driver },
+      //     { delay: 3 * 60 * 1000 }
+      //   );
+      // }
 
-      if (!timeWindow) throw new Error('Time window expired');
+      // const timeWindow = await redisService.get(timeWindowKey);
 
-      await orderService.updateOne(id, { driver_id: Number(delivery_driver) });
+      // if (!timeWindow) throw new Error('Time window expired');
+
+      await orderService.updateOne(id, { driver_id: Number(delivery_driver), status: 'in_progress' });
+      await deliveryDriverService.updateDeliveryDriver(Number(delivery_driver), { status: 'busy' });
       res.json({ message: 'Order accepted successfully' });
     } catch (error) {
       if (error instanceof Error) {
