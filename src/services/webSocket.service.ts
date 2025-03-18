@@ -33,7 +33,6 @@ const webSocketService = {
       socket.on('updateLocation', (data: WebSocketMessage) => {
         const { driverId, lat, lng } = data;
         redisService.set(`location:${driverId}`, JSON.stringify({ lat, lng }))
-        redisService.lpush(`routes:${driverId}`, JSON.stringify({ lat, lng }))
       });
 
       socket.on("customEvent", (data: any) => {
