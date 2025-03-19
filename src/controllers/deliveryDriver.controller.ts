@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { deliveryDriverService } from '../services/deliveryDriver.service';
 import { orderService } from '../services/order.service';
-import { redisService } from 'src/services/redis.service';
+import { redisService } from '../services/redis.service';
 
 export const deliveryDriverController = {
   findDeliveryCandidates: async (req: Request, res: Response) => {
