@@ -178,6 +178,7 @@ export const orderController = {
       // if (!timeWindow) throw new Error('Time window expired');
 
       await orderService.updateOne(id, { driver_id: Number(delivery_driver), status: 'in_progress' });
+      await webSocketService.emitToRoom('message', `order_${id}`, { type: 'order_status_change', payload: { status: 'in_progress' } });
       await deliveryDriverService.updateDeliveryDriver(Number(delivery_driver), { status: 'busy' });
       res.json({ message: 'Order accepted successfully' });
     } catch (error) {
