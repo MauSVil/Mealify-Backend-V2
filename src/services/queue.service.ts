@@ -71,7 +71,7 @@ export const orderWorker = new Worker(
             }
           )
 
-          await webSocketService.emitToRoom('new-order', `driver-${driver.id}`, { type: 'new-order', orderId });
+          await webSocketService.emitToRoom('new-order', `driver:${driver.id}`, { type: 'new-order', orderId });
 
           console.log(`📢 Asking driver ${driver.id} to take order ${orderId}`);
 
