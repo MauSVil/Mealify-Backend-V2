@@ -4,6 +4,7 @@ import { deliveryDriverService } from './deliveryDriver.service';
 import { orderService } from './order.service';
 import { redisService } from './redis.service';
 import { pushNotificationService } from './pushNotification.service';
+import webSocketService from './webSocket.service';
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -69,6 +70,8 @@ export const orderWorker = new Worker(
               screen: `/accept-order/${orderId}`,
             }
           )
+
+          await webSocketService.emitToRoom('new-order', `driver-${driver.id}`, { type: 'new-order', orderId });
 
           console.log(`📢 Asking driver ${driver.id} to take order ${orderId}`);
 
