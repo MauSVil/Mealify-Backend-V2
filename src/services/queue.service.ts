@@ -63,7 +63,7 @@ export const orderWorker = new Worker(
           }
 
           await pushNotificationService.send(
-            driver.tokens,
+            driver.token!,
             `🚨 Nueva orden disponible`,
             `🍔 Acepta la orden lo antes posible`,
             {

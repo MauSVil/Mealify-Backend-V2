@@ -38,7 +38,7 @@ model delivery_drivers {
   updated_at    DateTime? @default(now()) @db.Timestamp(6)
   latitude      Decimal?  @db.Decimal(9, 6)
   longitude     Decimal?  @db.Decimal(9, 6)
-  tokens        String[]  @default([])
+  token         String?    
   orders        orders[]
 }
 
@@ -99,7 +99,7 @@ model users {
   phone          String?          @db.VarChar(15)
   created_at     DateTime?        @default(now()) @db.Timestamp(6)
   updated_at     DateTime?        @default(now()) @db.Timestamp(6)
-  tokens         String[]         @default([])
+  token          String?           
   orders         orders[]
   user_addresses user_addresses[]
 }

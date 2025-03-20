@@ -5,7 +5,7 @@ export const userSchema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio'),
   email: z.string().email('El correo debe ser válido'),
   clerk_user_id: z.string(),
-  tokens: z.array(z.string()),
+  token: z.string().nullable(),
   phone: z.string().nullable(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),

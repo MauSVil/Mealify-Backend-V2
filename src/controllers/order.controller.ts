@@ -83,7 +83,7 @@ export const orderController = {
           case 'preparing':
             await redisService.zrem('delayedOrders', `${updatedOrder.id}`);
             await pushNotificationService.send(
-              foundOrder.users.tokens,
+              foundOrder.users.token!,
               '🔔 Acutalización de Orden',
               '🥳 Tu orden está siendo preparada'
             );
@@ -91,7 +91,7 @@ export const orderController = {
           case 'cancelled_by_restaurant':
             await redisService.zrem("delayedOrders", `${id}`);
             await pushNotificationService.send(
-              foundOrder.users.tokens,
+              foundOrder.users.token!,
               '🔔 Acutalización de Orden',
               '❌ Tu orden ha sido cancelada'
             );
@@ -100,7 +100,7 @@ export const orderController = {
           case 'ready_for_pickup':
             await orderQueue.add('assignDelivery', { orderId: updatedOrder.id });
             await pushNotificationService.send(
-              foundOrder.users.tokens,
+              foundOrder.users.token!,
               '🔔 Acutalización de Orden',
               '🏍️ Tu orden está lista para ser recogida'
             );
@@ -119,7 +119,7 @@ export const orderController = {
             await redisService.zrem("delayedOrders", `${id}`);
             await webSocketService.emitToRoom('message', `business_${foundOrder.restaurants.id}`, { type: 'order_status_change', payload: { status: rest.status, orderId: id } });
             await pushNotificationService.send(
-              foundOrder.users.tokens,
+              foundOrder.users.token!,
               '🔔 Acutalización de Orden',
               '⏰ Tu orden tiene un retraso por parte del restaurante'
             );
