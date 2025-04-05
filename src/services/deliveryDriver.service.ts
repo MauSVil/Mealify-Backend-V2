@@ -18,6 +18,8 @@ export const deliveryDriverService = {
     delete deliveryDriverData.id;
     const deliveryDriverUpdated = await DeliveryDriverRepository.updateOne(id, deliveryDriverData);
 
+    console.log({ file, buffer: file?.buffer });
+
     if (file && file?.buffer) {
       const sizes = [800];
       const extension = 'webp';
