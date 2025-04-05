@@ -10,12 +10,13 @@ const minioClient = new MinioClient({
 });
 
 export const fileService = {
-  compressImage: async (buffer: Buffer, format: 'webp' | 'jpeg' | 'png' = 'webp', sizes: number[], quality: number = 80) => {
+  compressImage: async (buffer: Buffer, format: 'webp' | 'jpeg' | 'png' = 'webp', sizes: number[], quality: number = 80, { rotate = 0 }: { rotate?: number }) => {
     const compressedImages = await Promise.all(
       sizes.map(async (size) => {
         return sharp(buffer)
           .resize(size)
           [format]({ quality: quality || 80 })
+          .rotate(rotate)
           .toBuffer();
       })
     );
