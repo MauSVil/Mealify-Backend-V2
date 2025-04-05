@@ -17,7 +17,7 @@ export const productService = {
 
     const sizes = [200, 400, 800];
     const extension = 'webp';
-    const compressedFiles = await fileService.compressImage(file.buffer, extension, sizes);
+    const compressedFiles = await fileService.compressImage(file.buffer, { sizes, format: extension } );
     const urls = await Promise.all(compressedFiles.map(async (compessedFile, idx) => {
       return await fileService.uploadImage('products', `${productCreated.id}/image-${sizes[idx]}.${extension}`, compessedFile);
     }));
@@ -43,7 +43,7 @@ export const productService = {
     if (file && file?.buffer) {
       const sizes = [200, 400, 800];
       const extension = 'webp';
-      const compressedFiles = await fileService.compressImage(file.buffer, extension, sizes);
+      const compressedFiles = await fileService.compressImage(file.buffer, { sizes, format: extension });
       const urls = await Promise.all(compressedFiles.map(async (compessedFile, idx) => {
         return await fileService.uploadImage('products', `${productUpdated.id}/image-${sizes[idx]}.${extension}`, compessedFile);
       }));
