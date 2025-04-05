@@ -3,6 +3,7 @@ import { DeliveryDriverRepository } from "../repositories/DeliveryDriver.reposit
 import { DeliveryDriver } from "../types/DeliveryDriver.type";
 import { mapService } from "./map.service";
 import { redisService } from "./redis.service";
+import { fileService } from "./file.service";
 
 export const deliveryDriverService = {
   getAllDeliveryDrivers: async () => {
@@ -13,9 +14,28 @@ export const deliveryDriverService = {
     const deliveryDriver = await DeliveryDriverRepository.findById(id);
     return deliveryDriver;
   },
-  updateDeliveryDriver: async (id: number, deliveryDriverData: Partial<DeliveryDriver>) => {
-    const deliveryDriver = await DeliveryDriverRepository.updateOne(id, deliveryDriverData);
-    return deliveryDriver;
+  updateDeliveryDriver: async (id: number, deliveryDriverData: Partial<DeliveryDriver>, file?: Express.Multer.File) => {
+    delete deliveryDriverData.id;
+    const deliveryDriverUpdated = await DeliveryDriverRepository.updateOne(id, deliveryDriverData);
+
+    if (file && file?.buffer) {
+      const sizes = [400];
+      const extension = 'webp';
+      const compressedFiles = await fileService.compressImage(file.buffer, extension, sizes);
+      const urls = await Promise.all(compressedFiles.map(async (compessedFile, idx) => {
+        return await fileService.uploadImage('delivery_drivers', `${deliveryDriverUpdated.id}/image-${sizes[idx]}.${extension}`, compessedFile);
+      }));
+      const { id, ...rest } = deliveryDriverUpdated;
+      return await DeliveryDriverRepository.updateOne(
+        deliveryDriverUpdated.id!,
+        {
+          ...rest,
+          image: urls[0],
+        }
+      );
+    }
+
+    return deliveryDriverUpdated;
   },
   deleteDeliveryDriver: async (id: number) => {
     const deliveryDriver = await DeliveryDriverRepository.deleteById(id);

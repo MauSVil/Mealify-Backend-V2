@@ -15,6 +15,7 @@ export const deliveryDriverSchema = z.object({
   longitude: z.instanceof(Decimal).optional().nullable(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
+  image: z.string().optional(),
 });
 
 export type DeliveryDriver = z.infer<typeof deliveryDriverSchema>;

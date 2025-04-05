@@ -80,9 +80,7 @@ export const deliveryDriverController = {
       const body = req.body;
       const file = req.file;
 
-      console.log({ file });
-
-      const userUpdated = await deliveryDriverService.updateDeliveryDriver(idNumber, body);
+      const userUpdated = await deliveryDriverService.updateDeliveryDriver(idNumber, body, file);
       res.status(200).json(userUpdated);
     } catch (error) {
       if (error instanceof Error) {
