@@ -25,21 +25,21 @@ model admins {
 }
 
 model delivery_drivers {
-  id            Int       @id @default(autoincrement())
-  name          String    @db.VarChar(100)
-  phone         String    @db.VarChar(15)
-  email         String    @unique @db.VarChar(150)
-  clerk_user_id String    @unique @db.VarChar(255)
-  vehicle_type  String?   @db.VarChar(50)
-  license_plate String?   @db.VarChar(20)
-  is_active     Boolean   @default(true)
+  id            Int          @id @default(autoincrement())
+  name          String       @db.VarChar(100)
+  phone         String       @db.VarChar(15)
+  email         String       @unique @db.VarChar(150)
+  clerk_user_id String       @unique @db.VarChar(255)
+  vehicle_type  String?      @db.VarChar(50)
+  license_plate String?      @db.VarChar(20)
+  is_active     Boolean      @default(true)
+  created_at    DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?    @default(now()) @db.Timestamp(6)
+  latitude      Decimal?     @db.Decimal(9, 6)
+  longitude     Decimal?     @db.Decimal(9, 6)
   status        DriverStatus @default(available)
-  created_at    DateTime? @default(now()) @db.Timestamp(6)
-  updated_at    DateTime? @default(now()) @db.Timestamp(6)
-  latitude      Decimal?  @db.Decimal(9, 6)
-  longitude     Decimal?  @db.Decimal(9, 6)
-  image         String?   @db.VarChar(255)
-  token         String?    
+  token         String?
+  image         String?      @db.VarChar(255)
   orders        orders[]
 }
 
@@ -100,7 +100,7 @@ model users {
   phone          String?          @db.VarChar(15)
   created_at     DateTime?        @default(now()) @db.Timestamp(6)
   updated_at     DateTime?        @default(now()) @db.Timestamp(6)
-  token          String?           
+  token          String?
   orders         orders[]
   user_addresses user_addresses[]
 }
