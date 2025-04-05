@@ -76,7 +76,13 @@ export const deliveryDriverController = {
       const { id } = req.params;
       if (!id) throw new Error("Id is required");
       const idNumber = parseInt(id);
-      const userUpdated = await deliveryDriverService.updateDeliveryDriver(idNumber, req.body);
+
+      const body = req.body;
+      const file = req.file;
+
+      console.log({ file });
+
+      const userUpdated = await deliveryDriverService.updateDeliveryDriver(idNumber, body);
       res.status(200).json(userUpdated);
     } catch (error) {
       if (error instanceof Error) {
