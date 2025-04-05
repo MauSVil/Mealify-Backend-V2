@@ -18,9 +18,7 @@ export const deliveryDriverService = {
     delete deliveryDriverData.id;
     const deliveryDriverUpdated = await DeliveryDriverRepository.updateOne(id, deliveryDriverData);
 
-    console.log({ file, buffer: file?.buffer });
-
-    if (file && file?.buffer) {
+    if (file && !file.originalname.includes("image") && file?.buffer) {
       const sizes = [800];
       const extension = 'webp';
       const compressedFiles = await fileService.compressImage(file.buffer, { sizes, format: extension, quality: 100, rotate: 90 });
