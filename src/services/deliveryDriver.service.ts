@@ -4,6 +4,7 @@ import { DeliveryDriver } from "../types/DeliveryDriver.type";
 import { mapService } from "./map.service";
 import { redisService } from "./redis.service";
 import { fileService } from "./file.service";
+import moment from "moment";
 
 export const deliveryDriverService = {
   getAllDeliveryDrivers: async () => {
@@ -30,7 +31,7 @@ export const deliveryDriverService = {
         deliveryDriverUpdated.id!,
         {
           ...rest,
-          image: urls[0],
+          image: `${urls[0]}?v=${moment().unix()}`,
         }
       );
     }
