@@ -23,7 +23,7 @@ export const deliveryDriverService = {
       const extension = 'webp';
       const compressedFiles = await fileService.compressImage(file.buffer, extension, sizes);
       const urls = await Promise.all(compressedFiles.map(async (compessedFile, idx) => {
-        return await fileService.uploadImage('delivery_drivers', `${deliveryDriverUpdated.id}/image-${sizes[idx]}.${extension}`, compessedFile);
+        return await fileService.uploadImage('deliverydrivers', `${deliveryDriverUpdated.id}/image-${sizes[idx]}.${extension}`, compessedFile);
       }));
       const { id, ...rest } = deliveryDriverUpdated;
       return await DeliveryDriverRepository.updateOne(
