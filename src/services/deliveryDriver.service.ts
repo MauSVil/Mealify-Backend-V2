@@ -71,6 +71,16 @@ export const deliveryDriverService = {
       if (Number(orderCount) === 1) continue;
       // if (Number(orderCount) >= 1 && !windowExists) continue;
 
+      const redisDriverPosition = await redisService.get(`location:${driver.id}`);
+      const { lat, lng } = JSON.parse(redisDriverPosition!);
+
+      const distance = mapService.getDistance(
+        { lat: latitude, lon: longitude },
+        { lat, lon: lng }
+      )
+
+      if (distance > 35) continue;
+
       eligibleDrivers.push(driver);
     }
 
