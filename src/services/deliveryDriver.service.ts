@@ -79,9 +79,7 @@ export const deliveryDriverService = {
         { lat, lon: lng }
       )
 
-      console.log({ distance, latitude, longitude, lat, lng })
-
-      if (distance > 35) continue;
+      if (distance > 5) continue;
 
       eligibleDrivers.push(driver);
     }
