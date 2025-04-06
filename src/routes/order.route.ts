@@ -12,4 +12,6 @@ router.post('/payment-intent', orderController.getOrderByPaymentIntent);
 router.get('/:id', orderController.getOrderById);
 router.get('/', dynamicClerkMiddleware, orderController.getAllOrders);
 
+router.post('/search', orderController.searchOrders);
+
 export default router;

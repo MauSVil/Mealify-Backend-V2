@@ -8,6 +8,7 @@ import { stripeService } from '../services/stripe.service';
 import { orderQueue } from '../services/queue.service';
 import { pushNotificationService } from '../services/pushNotification.service';
 import { deliveryDriverService } from '../services/deliveryDriver.service';
+import { ZodError } from 'zod';
 
 export const orderController = {
   getOrdersByRestaurant: async (req: Request, res: Response) => {
@@ -181,6 +182,20 @@ export const orderController = {
       await webSocketService.emitToRoom('message', `order_${id}`, { type: 'order_status_change', payload: { status: 'in_progress' } });
       await deliveryDriverService.updateDeliveryDriver(Number(delivery_driver), { status: 'busy' });
       res.json({ message: 'Order accepted successfully' });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
+
+  searchOrders: async (req: Request, res: Response) => {
+    const { filters, relations } = req.body;
+    try {
+      const orders = await orderService.find(filters, relations);
+      res.json(orders);
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ message: error.message });
