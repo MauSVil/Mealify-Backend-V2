@@ -178,6 +178,13 @@ export const orderController = {
 
       // if (!timeWindow) throw new Error('Time window expired');
 
+      const foundOrder = await orderService.findById({ id: Number(id), includeRelations: { restaurants: true, users: true } })
+      await pushNotificationService.send(
+        foundOrder.users.token!,
+        '🔔 Acutalización de Orden',
+        '🏍️ Tu orden ha sido aceptada por un repartidor'
+      );
+
       await orderService.updateOne(id, { driver_id: Number(delivery_driver), status: 'in_progress' });
       await webSocketService.emitToRoom('message', `order_${id}`, { type: 'order_status_change', payload: { status: 'in_progress' } });
       await deliveryDriverService.updateDeliveryDriver(Number(delivery_driver), { status: 'busy' });
