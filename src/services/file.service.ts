@@ -2,7 +2,7 @@ import sharp from 'sharp';
 import { Client as MinioClient } from 'minio';
 
 const minioClient = new MinioClient({
-  endPoint: 'minio.mausvil.dev',
+  endPoint: process.env.MINIO_ENDPOINT!,
   port: 443,
   useSSL: true,
   accessKey: process.env.MINIO_ACCES_KEY!,
@@ -40,7 +40,7 @@ export const fileService = {
 
   uploadImage: async (bucket: string, path: string, buffer: Buffer) => {
     await minioClient.putObject(bucket, path, buffer);
-    const fileUrl = `https://minio.mausvil.dev/${bucket}/${path}`;
+    const fileUrl = `https://${process.env.MINIO_ENDPOINT}/${bucket}/${path}`;
     return fileUrl;
   }
 }
