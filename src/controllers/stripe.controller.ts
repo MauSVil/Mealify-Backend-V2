@@ -93,6 +93,8 @@ export const stripeController = {
           const subscriptionId = session.subscription;
           const customerId = session.customer;
 
+          console.log({ businessId, subscriptionId, customerId });
+
           if (!businessId || !subscriptionId || !customerId) throw new Error('Business ID, Subscription ID and Customer ID are required');
           await restaurantsService.updateRestaurant(Number(businessId), { stripe_subscription_id: subscriptionId.toString(), stripe_customer_id: customerId.toString(), is_active: true });
 
