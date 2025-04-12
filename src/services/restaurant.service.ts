@@ -67,5 +67,8 @@ export const restaurantsService = {
   getDeliveredOrders: async (id: number) => {
     const restaurants = await RestaurantRepository.findById({ id, includeRelations: { orders: { include: { order_items: true } } } });
     return restaurants.orders.filter(o => o.status === 'delivered');
-  }
+  },
+  updateRestaurant: async (id: number, restaurant: Partial<Restaurant>) => {
+    return await RestaurantRepository.updateOne(id, restaurant);
+  },
 }

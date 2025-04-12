@@ -29,7 +29,7 @@ export const RestaurantRepository = {
       data: restaurantData,
     });
   },
-  updateOne: async (id: number, restaurantData: Restaurant) => {
+  updateOne: async (id: number, restaurantData: Partial<Restaurant>) => {
     return await prisma.restaurants.update({
       where: {
         id: id,
