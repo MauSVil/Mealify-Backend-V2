@@ -86,6 +86,17 @@ export const stripeController = {
           await orderService.updateOne(orderFound.id, { status: 'cancelled_by_user', payment_status: 'rejected' });
           break;
         }
+
+        case 'checkout.session.completed': {
+          const session = event.data.object;
+          const businessId = session.metadata?.business_id;
+          const subscriptionId = session.subscription;
+          const customerId = session.customer;
+
+          console.log({ businessId, subscriptionId, customerId });
+
+          break;
+        }
         default:
           console.log(`Unhandled event type ${event.type}`);
       }
