@@ -13,6 +13,20 @@ export const restaurantSchema = z.object({
   latitude: z.coerce.number(),
   longitude: z.coerce.number(),
   category: z.string(),
+  stripe_subscription_id: z.string().optional().nullable(),
+  stripe_customer_id: z.string().optional().nullable(),
+  subscription_status: z.enum([
+    'active',
+    'incomplete',
+    'incomplete_expired',
+    'trialing',
+    'past_due',
+    'canceled',
+    'unpaid',
+    'paused',
+    'pending'
+  ]).optional().nullable(),
+  is_active: z.boolean().default(false).optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });

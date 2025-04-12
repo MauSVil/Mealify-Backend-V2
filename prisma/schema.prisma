@@ -62,23 +62,29 @@ model products {
 }
 
 model restaurants {
-  id             Int        @id @default(autoincrement())
-  admin_id       Int?
-  name           String     @db.VarChar(100)
-  address        String     @db.VarChar(255)
-  phone          String?    @db.VarChar(15)
-  latitude       Decimal    @db.Decimal(9, 6)
-  longitude      Decimal    @db.Decimal(9, 6)
-  category       String     @db.VarChar(100)
-  hero_image_min String?    @db.VarChar(255)
-  hero_image_med String?    @db.VarChar(255)
-  hero_image_max String?    @db.VarChar(255)
-  created_at     DateTime?  @default(now()) @db.Timestamp(6)
-  updated_at     DateTime?  @default(now()) @db.Timestamp(6)
-  delivery_fee   Decimal    @db.Decimal
-  orders         orders[]
-  products       products[]
-  admins         admins?    @relation(fields: [admin_id], references: [id], onUpdate: NoAction)
+  id                     Int                 @id @default(autoincrement())
+  admin_id               Int?
+  name                   String              @db.VarChar(100)
+  address                String              @db.VarChar(255)
+  phone                  String?             @db.VarChar(15)
+  latitude               Decimal             @db.Decimal(9, 6)
+  longitude              Decimal             @db.Decimal(9, 6)
+  category               String              @db.VarChar(100)
+  hero_image_min         String?             @db.VarChar(255)
+  hero_image_med         String?             @db.VarChar(255)
+  hero_image_max         String?             @db.VarChar(255)
+  created_at             DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at             DateTime?           @default(now()) @db.Timestamp(6)
+  delivery_fee           Decimal             @db.Decimal
+
+  stripe_subscription_id String?             @db.VarChar(255)
+  stripe_customer_id     String?             @db.VarChar(255)
+  subscription_status    SubscriptionStatus? @default(pending)
+  is_active              Boolean             @default(false)
+
+  orders                 orders[]
+  products               products[]
+  admins                 admins?             @relation(fields: [admin_id], references: [id], onUpdate: NoAction)
 }
 
 model user_addresses {
@@ -179,4 +185,16 @@ enum DriverStatus {
   available
   busy
   offline
+}
+
+enum SubscriptionStatus {
+  active
+  incomplete
+  incomplete_expired
+  trialing
+  past_due
+  canceled
+  unpaid
+  paused
+  pending
 }

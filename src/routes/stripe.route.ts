@@ -10,5 +10,6 @@ router.post('/transfers', stripeController.getTransfers);
 router.post('/create-session', stripeController.createSession);
 router.get('/account', dynamicClerkMiddleware, stripeController.getAccount);
 router.get('/generate-sign-in-link', dynamicClerkMiddleware, stripeController.generateSignInLink);
+router.get('/generate-sub-checkout-session', stripeController.generateSubCheckoutSession);
 
 export default router;

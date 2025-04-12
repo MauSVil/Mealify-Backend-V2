@@ -208,5 +208,30 @@ export const stripeController = {
       }
       res.status(500).json({ message: "Internal server error" });
     }
+  },
+  generateSubCheckoutSession: async (req: Request, res: Response) => {
+    const businessId = req.headers['x-business-id'] as string;
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: process.env.STRIPE_SUBSCRIPTION_PRICE_ID!,
+            quantity: 1,
+          },
+        ],
+        success_url: `${process.env.FRONTEND_URL}/home`,
+        cancel_url: `${process.env.FRONTEND_URL}/home`,
+        metadata: {
+          business_id: businessId,
+        },
+      });
+  
+      res.status(200).json({ sessionId: session.id });
+    } catch (error) {
+      console.log({ error });
+      res.status(500).json({ error: 'Error creando la sesión de pago' });
+    }
   }
 }
