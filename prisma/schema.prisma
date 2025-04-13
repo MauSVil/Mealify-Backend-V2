@@ -76,12 +76,10 @@ model restaurants {
   created_at             DateTime?           @default(now()) @db.Timestamp(6)
   updated_at             DateTime?           @default(now()) @db.Timestamp(6)
   delivery_fee           Decimal             @db.Decimal
-
-  stripe_subscription_id String?             @db.VarChar(255)
-  stripe_customer_id     String?             @db.VarChar(255)
-  subscription_status    SubscriptionStatus? @default(pending)
   is_active              Boolean             @default(false)
-
+  stripe_customer_id     String?             @db.VarChar(255)
+  stripe_subscription_id String?             @db.VarChar(255)
+  subscription_status    SubscriptionStatus? @default(pending)
   orders                 orders[]
   products               products[]
   admins                 admins?             @relation(fields: [admin_id], references: [id], onUpdate: NoAction)
